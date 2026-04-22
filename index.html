@@ -1,0 +1,2264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Delta Project &amp; Solution</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet"/>
+<style>
+:root{--pri:#0f2d5e;--acc:#f97316;--acc2:#0ea5e9;--bg:#f4f7fb;--card:#fff;--txt:#1a2340;--mut:#6b7a99;--bdr:#e2e8f0;--grn:#16a34a;--red:#dc2626;--r:14px;--sh:0 4px 24px rgba(15,45,94,.10)}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--txt);overflow-x:hidden}
+a{text-decoration:none;color:inherit}img{display:block}button{font-family:inherit;cursor:pointer}
+.page{display:none!important}.page.on{display:block!important}
+/* TOPBAR */
+.topbar{background:var(--pri);color:#c8d8f0;font-size:13px;display:flex;align-items:center;justify-content:space-between;padding:6px 24px;flex-wrap:wrap;gap:6px}
+.topbar a{color:#c8d8f0;transition:.15s}.topbar a:hover{color:#fff}
+.tbl,.tbr{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+/* HEADER */
+header{background:#fff;border-bottom:2px solid var(--bdr);position:sticky;top:0;z-index:400;box-shadow:0 2px 12px rgba(15,45,94,.07)}
+.hdr{max-width:1280px;margin:0 auto;padding:0 20px;display:flex;align-items:center;gap:12px;height:66px}
+.logo{cursor:pointer;display:flex;align-items:center;gap:8px;flex-shrink:0}
+.logo img{height:48px;width:auto;object-fit:contain}
+.logo-txt{font-family:'Syne',sans-serif;font-weight:800;font-size:17px;color:var(--pri)}.logo-txt span{color:var(--acc)}
+.srch{flex:1;max-width:400px;display:flex;background:var(--bg);border:1.5px solid var(--bdr);border-radius:8px;overflow:hidden;min-width:0}
+.srch input{flex:1;border:none;background:transparent;padding:0 12px;font-size:14px;outline:none;font-family:inherit;min-width:0}
+.srch button{background:var(--acc);border:none;padding:0 14px;color:#fff;font-size:14px;transition:.2s}
+.srch button:hover{background:#ea6d0a}
+nav{display:flex;align-items:center;gap:2px;margin-left:auto}
+.nl{font-family:'Syne',sans-serif;font-weight:600;font-size:13px;padding:7px 10px;border-radius:7px;transition:.18s;color:var(--pri);cursor:pointer;white-space:nowrap;user-select:none}
+.nl:hover,.nl.on{background:var(--pri);color:#fff}
+.ni{position:relative}.ni:hover .drop{display:block}
+.drop{display:none;position:absolute;top:calc(100%+4px);left:0;background:#fff;border:1.5px solid var(--bdr);border-radius:var(--r);min-width:200px;padding:6px 0;box-shadow:var(--sh);z-index:500}
+.drop a{display:block;padding:8px 16px;font-size:13px;color:var(--txt);transition:.15s;cursor:pointer}
+.drop a:hover{background:var(--bg);color:var(--acc)}
+.hdr-r{display:flex;align-items:center;gap:7px}
+.ib{background:none;border:1.5px solid var(--bdr);border-radius:8px;padding:6px 10px;font-size:16px;position:relative;display:flex;align-items:center;gap:4px;color:var(--txt);transition:.15s}
+.ib:hover{border-color:var(--acc)}
+.bcnt{position:absolute;top:-5px;right:-5px;background:var(--acc);color:#fff;border-radius:50%;width:17px;height:17px;font-size:10px;display:flex;align-items:center;justify-content:center;font-weight:700;font-family:'Syne',sans-serif}
+.btn-cart-h{background:var(--acc);color:#fff;border:none;border-radius:8px;padding:7px 14px;font-family:'Syne',sans-serif;font-size:13px;font-weight:600;display:flex;align-items:center;gap:5px;transition:.18s}
+.btn-cart-h:hover{background:#ea6d0a}
+.currency-toggle{background:var(--bg);border:1.5px solid var(--bdr);border-radius:8px;padding:5px 10px;font-family:'Syne',sans-serif;font-size:12px;font-weight:700;color:var(--pri);cursor:pointer;transition:.15s;white-space:nowrap}
+.currency-toggle:hover{border-color:var(--acc);color:var(--acc)}
+/* CATBAR */
+.catbar{background:#fff;border-bottom:1.5px solid var(--bdr);overflow-x:auto;scrollbar-width:thin;scrollbar-color:var(--acc) transparent}
+.catbar::-webkit-scrollbar{height:3px}.catbar::-webkit-scrollbar-thumb{background:var(--acc);border-radius:2px}
+.catbar-in{display:inline-flex;padding:0 20px;min-width:100%}
+.ctab{display:inline-flex;align-items:center;gap:5px;padding:10px 14px;font-family:'Syne',sans-serif;font-size:12px;font-weight:600;color:var(--mut);border-bottom:3px solid transparent;transition:.18s;cursor:pointer;white-space:nowrap}
+.ctab:hover,.ctab.on{color:var(--pri);border-color:var(--acc)}
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 20px;border-radius:9px;font-family:'Syne',sans-serif;font-weight:700;font-size:14px;border:none;transition:.18s;line-height:1}
+.bp{background:var(--acc);color:#fff}.bp:hover{background:#ea6d0a;transform:translateY(-1px)}
+.bs{background:var(--pri);color:#fff}.bs:hover{background:#1a4a8a;transform:translateY(-1px)}
+.bo{background:transparent;border:2px solid var(--pri);color:var(--pri)}.bo:hover{background:var(--pri);color:#fff}
+.bw{background:#25D366;color:#fff}.bw:hover{background:#128C7E}
+.br{background:var(--red);color:#fff}.br:hover{background:#b91c1c}
+.sm{padding:6px 13px;font-size:12px}.lg{padding:13px 26px;font-size:15px}
+.bf{width:100%}
+/* HERO */
+.hero{background:linear-gradient(130deg,#0b2147 0%,#1a4a8a 55%,#0e6baa 100%);color:#fff;padding:58px 20px 48px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 20% 50%,rgba(249,115,22,.12) 0%,transparent 60%),radial-gradient(circle at 80% 20%,rgba(14,165,233,.15) 0%,transparent 50%)}
+.hero h1{font-family:'Syne',sans-serif;font-size:clamp(22px,4.5vw,48px);font-weight:800;line-height:1.12;margin-bottom:12px;position:relative;z-index:1}
+.hero h1 em{color:#fbbf24;font-style:normal}
+.hero p{font-size:15px;opacity:.88;max-width:540px;margin:0 auto 24px;position:relative;z-index:1;line-height:1.65}
+.hero-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;position:relative;z-index:1}
+.hero-stats{display:flex;justify-content:center;gap:36px;margin-top:36px;flex-wrap:wrap;position:relative;z-index:1}
+.stn{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;color:#fbbf24}.stl{font-size:12px;opacity:.75;margin-top:2px}
+/* SECTIONS */
+.sec{padding:48px 20px}.sec-bg{background:#fff}.sec-dark{background:var(--pri);color:#fff}
+.wrap{max-width:1280px;margin:0 auto}
+.slbl{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--acc);margin-bottom:7px}
+.sh{font-family:'Syne',sans-serif;font-size:clamp(18px,3vw,30px);font-weight:800;margin-bottom:24px;line-height:1.2;color:var(--pri)}
+.sh span{color:var(--acc)}.sec-dark .sh{color:#fff}.sec-dark .sh span{color:#fbbf24}
+/* GRIDS */
+.g3{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px}
+.g4{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px}
+/* PRODUCT CARD — FIXED IMAGE FITTING */
+.pc{background:var(--card);border:1.5px solid var(--bdr);border-radius:var(--r);overflow:hidden;transition:.22s;position:relative;display:flex;flex-direction:column}
+.pc:hover{box-shadow:0 10px 40px rgba(15,45,94,.14);transform:translateY(-4px);border-color:var(--acc2)}
+.pc-img-wrap{position:relative;overflow:hidden;background:linear-gradient(135deg,#e8f0fb,#d1e3f8);width:100%;height:200px;flex-shrink:0}
+.pc-img{width:100%;height:100%;object-fit:cover;object-position:center;display:block;transition:transform .35s ease}
+.pc:hover .pc-img{transform:scale(1.06)}
+.pc-ph{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:52px}
+.pc-badge{position:absolute;top:10px;left:10px;color:#fff;font-size:11px;font-weight:700;font-family:'Syne',sans-serif;padding:3px 9px;border-radius:20px;z-index:2;pointer-events:none}
+.pc-badge.g{background:var(--grn)}.pc-badge.b{background:var(--acc2)}.pc-badge.o{background:var(--acc)}.pc-badge.r{background:var(--red)}
+.pc-disc{position:absolute;top:10px;right:44px;background:var(--red);color:#fff;font-size:10px;font-weight:700;font-family:'Syne',sans-serif;padding:3px 7px;border-radius:20px;z-index:2;pointer-events:none}
+.pc-wish{position:absolute;top:10px;right:10px;background:rgba(255,255,255,.92);border:none;border-radius:50%;width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-size:15px;transition:.15s;z-index:2;backdrop-filter:blur(4px)}
+.pc-wish:hover{background:#fff;transform:scale(1.12)}.pc-wish.on{color:var(--red)}
+.pc-body{padding:13px;flex:1;display:flex;flex-direction:column;gap:0}
+.pc-tags{display:flex;flex-wrap:wrap;gap:3px;margin-bottom:6px}
+.ptag{font-size:11px;color:var(--acc2);background:#e0f2fe;padding:2px 7px;border-radius:20px;font-weight:500}
+.pc-title{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--pri);margin-bottom:5px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;flex:1}
+.pc-title:hover{color:var(--acc)}
+.pc-desc{font-size:12px;color:var(--mut);line-height:1.5;margin-bottom:9px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.pc-foot{display:flex;align-items:center;justify-content:space-between;padding-top:9px;border-top:1px solid var(--bdr)}
+.prc{font-family:'Syne',sans-serif;font-size:16px;font-weight:800;color:var(--grn)}
+.prc-old{font-size:11px;color:var(--mut);text-decoration:line-through;margin-top:1px}
+.pc-acts{display:flex;gap:5px;margin-top:8px}
+.pc-acts button{flex:1;background:var(--bg);border:1.5px solid var(--bdr);padding:6px 4px;border-radius:7px;font-size:11px;font-family:inherit;transition:.15s;color:var(--txt)}
+.pc-acts button:hover{background:#e0f2fe;border-color:var(--acc2);color:var(--acc)}
+/* SHOP */
+.shop-w{max-width:1280px;margin:0 auto;padding:24px 20px;display:flex;gap:22px}
+.sidebar{width:230px;flex-shrink:0}
+.sb{background:var(--card);border:1.5px solid var(--bdr);border-radius:var(--r);padding:15px;margin-bottom:14px}
+.sb-h{font-family:'Syne',sans-serif;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--pri);margin-bottom:10px;padding-bottom:7px;border-bottom:2px solid var(--acc)}
+.sbc{display:flex;align-items:center;justify-content:space-between;padding:7px 0;font-size:13px;border-bottom:1px solid var(--bdr);transition:.15s}
+.sbc:last-child{border:none}.sbc:hover,.sbc.on{color:var(--acc)}.sbc.on{font-weight:600}
+.sb-cnt{background:var(--bg);color:var(--mut);border-radius:20px;padding:1px 7px;font-size:11px;font-weight:600}.sbc.on .sb-cnt{background:var(--acc);color:#fff}
+.pi{display:flex;gap:6px;margin-top:7px}
+.pi input{width:50%;padding:6px 8px;border:1.5px solid var(--bdr);border-radius:7px;font-size:12px;font-family:inherit;outline:none}
+.pi input:focus{border-color:var(--acc2)}
+.cnt{flex:1;min-width:0}
+.cnt-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px}
+.bc-crumb{font-size:12px;color:var(--mut);margin-bottom:5px}
+.bc-crumb a{color:var(--acc2);cursor:pointer}.bc-crumb a:hover{text-decoration:underline}
+.rb{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.ss{padding:6px 10px;border:1.5px solid var(--bdr);border-radius:8px;font-size:13px;font-family:inherit;outline:none;background:#fff}
+.vt{display:flex;gap:3px}
+.vb{width:30px;height:30px;border:1.5px solid var(--bdr);background:#fff;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px;transition:.15s}
+.vb:hover,.vb.on{border-color:var(--acc);background:var(--acc);color:#fff}
+/* PRODUCT DETAIL */
+.pd-w{max-width:1280px;margin:0 auto;padding:24px 20px}
+.pd-g{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start}
+.pd-img-box{border-radius:var(--r);border:1.5px solid var(--bdr);overflow:hidden;background:linear-gradient(135deg,#e8f0fb,#d1e3f8);height:380px;display:flex;align-items:center;justify-content:center}
+.pd-img-box img{width:100%;height:100%;object-fit:cover;object-position:center;display:block}
+.pd-info h1{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--pri);margin:8px 0 6px;line-height:1.3}
+.pd-prc{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:var(--grn)}
+.pd-meta{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:14px 0;background:var(--bg);border-radius:10px;padding:12px}
+.pd-mi label{font-size:11px;color:var(--mut);text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:2px}
+.pd-mi span{font-size:13px;font-weight:600;color:var(--pri)}
+.incl-list{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}
+.incl-tag{background:#d1fae5;color:#065f46;font-size:11px;padding:3px 9px;border-radius:20px;font-weight:600}
+.qty-w{display:flex;align-items:center;border:1.5px solid var(--bdr);border-radius:8px;overflow:hidden}
+.qty-w button{background:var(--bg);border:none;width:34px;height:38px;font-size:17px;color:var(--txt)}
+.qty-w button:hover{background:var(--bdr)}
+.qty-w input{width:44px;text-align:center;border:none;font-size:14px;font-family:inherit;font-weight:700;outline:none}
+/* TABS */
+.tabs{display:flex;border-bottom:2px solid var(--bdr);margin-top:26px;overflow-x:auto;gap:0}
+.tbb{padding:9px 16px;font-family:'Syne',sans-serif;font-size:13px;font-weight:600;color:var(--mut);border-bottom:3px solid transparent;margin-bottom:-2px;cursor:pointer;transition:.18s;white-space:nowrap}
+.tbb.on{color:var(--pri);border-color:var(--acc)}
+.tab-c{display:none;padding:18px 0}.tab-c.on{display:block}
+.spec-t{width:100%;border-collapse:collapse}
+.spec-t tr{border-bottom:1px solid var(--bdr)}
+.spec-t td{padding:9px 13px;font-size:13px}
+.spec-t td:first-child{color:var(--mut);font-weight:500;width:36%;background:var(--bg)}
+/* CART */
+.cart-w{max-width:1100px;margin:0 auto;padding:24px 20px}
+.cart-g{display:grid;grid-template-columns:1fr 320px;gap:20px}
+.cart-t{width:100%;border-collapse:collapse}
+.cart-t th{text-align:left;padding:10px 13px;font-family:'Syne',sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--mut);background:var(--bg);border-bottom:2px solid var(--bdr)}
+.cart-t td{padding:12px 13px;border-bottom:1px solid var(--bdr);vertical-align:middle;font-size:13px}
+.cart-img{width:64px;height:50px;object-fit:cover;border-radius:7px;background:#e8f0fb}
+.sum-box{background:var(--card);border:1.5px solid var(--bdr);border-radius:var(--r);padding:18px;position:sticky;top:76px}
+.sum-row{display:flex;justify-content:space-between;padding:7px 0;font-size:13px;border-bottom:1px solid var(--bdr)}
+.sum-row.tot{border-top:2px solid var(--bdr);border-bottom:none;font-weight:700;font-size:15px;padding-top:10px;margin-top:3px}
+/* CHECKOUT */
+.co-w{max-width:1000px;margin:0 auto;padding:24px 20px}
+.co-g{display:grid;grid-template-columns:1fr 340px;gap:20px;align-items:start}
+.fbox{background:var(--card);border:1.5px solid var(--bdr);border-radius:var(--r);padding:20px}
+.fh{font-family:'Syne',sans-serif;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--pri);margin-bottom:12px;padding-bottom:7px;border-bottom:2px solid var(--acc)}
+.fg{margin-bottom:12px}
+.fg label{display:block;font-size:12px;font-weight:600;color:var(--pri);margin-bottom:4px;font-family:'Syne',sans-serif}
+.fg input,.fg textarea,.fg select{width:100%;padding:8px 12px;border:1.5px solid var(--bdr);border-radius:8px;font-size:13px;font-family:inherit;outline:none;transition:.15s;background:#fff}
+.fg input:focus,.fg textarea:focus{border-color:var(--acc2);box-shadow:0 0 0 3px rgba(14,165,233,.1)}
+.fg-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.rg{display:flex;flex-direction:column;gap:7px;margin-top:5px}
+.ro{display:flex;align-items:center;gap:9px;padding:10px 13px;border:1.5px solid var(--bdr);border-radius:8px;transition:.15s}
+.ro:hover{border-color:var(--acc2)}.ro.on{border-color:var(--acc);background:#fff7ed}
+.ro input[type=radio]{accent-color:var(--acc)}
+/* WISHLIST */
+.wl-w{max-width:1280px;margin:0 auto;padding:24px 20px}
+/* BLOG */
+.blog-w{max-width:1280px;margin:0 auto;padding:24px 20px}
+.blog-g{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:20px}
+.bc{background:var(--card);border:1.5px solid var(--bdr);border-radius:var(--r);overflow:hidden;transition:.2s;cursor:pointer}
+.bc:hover{box-shadow:var(--sh);transform:translateY(-3px)}
+.bc-img{width:100%;height:170px;object-fit:cover;object-position:center;background:#e8f0fb}
+.bc-body{padding:15px}
+.bc-date{font-size:12px;color:var(--mut);margin-bottom:5px}
+.bc-title{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--pri);margin-bottom:6px;line-height:1.35}
+.bc-exc{font-size:13px;color:var(--mut);line-height:1.6}
+/* CONTACT */
+.ct-w{max-width:1100px;margin:0 auto;padding:24px 20px}
+.ct-g{display:grid;grid-template-columns:1fr 1fr;gap:26px}
+.ci{display:flex;gap:12px;align-items:flex-start;padding:15px;background:var(--card);border:1.5px solid var(--bdr);border-radius:var(--r);margin-bottom:11px;transition:.2s}
+.ci:hover{box-shadow:var(--sh)}.ci-ico{font-size:26px;flex-shrink:0}
+.ci-lbl{font-family:'Syne',sans-serif;font-weight:700;font-size:13px;color:var(--pri);margin-bottom:3px}
+.ci-val{font-size:13px;color:var(--mut)}
+/* ADMIN */
+.admin-w{max-width:1400px;margin:0 auto;padding:20px}
+.admin-g{display:grid;grid-template-columns:200px 1fr;gap:20px;min-height:80vh}
+.an{background:var(--pri);border-radius:var(--r);padding:16px 0;height:fit-content;position:sticky;top:76px}
+.an-h{font-family:'Syne',sans-serif;font-weight:700;font-size:10px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.08em;padding:0 16px;margin-bottom:8px}
+.an-l{display:flex;align-items:center;gap:8px;padding:9px 16px;font-size:13px;color:rgba(255,255,255,.7);transition:.15s;cursor:pointer}
+.an-l:hover,.an-l.on{background:rgba(255,255,255,.1);color:#fff}
+.stat-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-bottom:20px}
+.sc{background:var(--card);border:1.5px solid var(--bdr);border-radius:var(--r);padding:16px}
+.sc-ico{font-size:24px;margin-bottom:6px}.sc-num{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:var(--pri)}.sc-lbl{font-size:12px;color:var(--mut);margin-top:2px}
+.at{width:100%;border-collapse:collapse;font-size:12px}
+.at th{text-align:left;padding:9px 12px;font-family:'Syne',sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--mut);background:var(--bg);border-bottom:2px solid var(--bdr)}
+.at td{padding:10px 12px;border-bottom:1px solid var(--bdr);vertical-align:middle}
+.at tr:hover td{background:#fafbfc}
+.bs2{display:inline-flex;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700;font-family:'Syne',sans-serif}
+.bs2.pending{background:#fef3c7;color:#92400e}.bs2.processing{background:#dbeafe;color:#1e40af}
+.bs2.completed{background:#d1fae5;color:#065f46}.bs2.cancelled{background:#fee2e2;color:#991b1b}
+.bs2.new{background:#dbeafe;color:#1e40af}.bs2.paid{background:#d1fae5;color:#065f46}
+/* MODAL */
+.mo{display:none;position:fixed;inset:0;background:rgba(0,0,0,.52);z-index:600;align-items:center;justify-content:center;padding:12px;backdrop-filter:blur(4px)}
+.mo.open{display:flex!important}
+.md{background:#fff;border-radius:18px;width:100%;max-height:93vh;overflow-y:auto;position:relative;animation:mdi .22s ease}
+@keyframes mdi{from{opacity:0;transform:scale(.95) translateY(14px)}to{opacity:1;transform:scale(1)translateY(0)}}
+.md-x{position:absolute;top:12px;right:12px;background:var(--bg);border:none;width:30px;height:30px;border-radius:50%;font-size:16px;display:flex;align-items:center;justify-content:center;z-index:1;transition:.15s}
+.md-x:hover{background:#fee2e2}
+/* QUICK VIEW MODAL */
+.qv-in{display:flex}
+.qv-img{width:260px;flex-shrink:0;background:linear-gradient(135deg,#e8f0fb,#d1e3f8);display:flex;align-items:center;justify-content:center;font-size:64px;border-radius:18px 0 0 18px;overflow:hidden;min-height:300px}
+.qv-img img{width:100%;height:100%;object-fit:cover;object-position:center}
+.qv-body{padding:22px;flex:1}
+.qv-body h2{font-family:'Syne',sans-serif;font-size:16px;font-weight:800;color:var(--pri);margin:8px 0 6px;line-height:1.3}
+.qv-prc{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--grn);margin-bottom:9px}
+.qv-body p{font-size:13px;color:var(--mut);line-height:1.6;margin-bottom:11px}
+/* REGION POPUP */
+.region-pop{max-width:420px}
+.region-pop .md-x{display:none}
+.region-opts{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px}
+
+
+.region-btn.sel{border-color:var(--acc);background:#fff7ed}
+
+
+.region-cur{font-size:13px;color:var(--mut);margin-top:3px}
+/* AUTH */
+.auth-box{padding:24px}
+.auth-tabs{display:flex;border-bottom:2px solid var(--bdr);margin-bottom:16px}
+.auth-tab{padding:8px 16px;font-family:'Syne',sans-serif;font-size:13px;font-weight:600;color:var(--mut);border-bottom:3px solid transparent;margin-bottom:-2px;cursor:pointer;transition:.18s}
+.auth-tab.on{color:var(--pri);border-color:var(--acc)}
+/* SETTINGS FORM */
+.settings-g{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.settings-section{background:var(--card);border:1.5px solid var(--bdr);border-radius:var(--r);padding:18px;margin-bottom:16px}
+.settings-section h3{font-family:'Syne',sans-serif;font-weight:700;font-size:13px;color:var(--pri);margin-bottom:14px;padding-bottom:8px;border-bottom:2px solid var(--acc)}
+/* SOCIAL MEDIA ICONS */
+.social-links{display:flex;gap:10px;flex-wrap:wrap}
+.social-link{display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:600;color:#fff;transition:.18s;text-decoration:none}
+.social-link:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.2)}
+.sl-fb{background:#1877F2}.sl-ig{background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)}
+.sl-yt{background:#FF0000}.sl-li{background:#0A66C2}.sl-tw{background:#1DA1F2}.sl-wa{background:#25D366}
+/* REVIEWS */
+.rv-card{background:#fff;border:1.5px solid var(--bdr);border-radius:10px;padding:13px;margin-bottom:9px}
+.rv-stars{color:#fbbf24;font-size:13px;margin-bottom:3px}
+.rv-txt{font-size:13px;color:var(--txt);line-height:1.6}
+.rv-auth{font-size:12px;color:var(--mut);margin-top:6px}
+.star-pick{display:flex;gap:3px;font-size:25px;margin-bottom:9px}
+.star-pick span{color:#d1d5db;transition:.15s}.star-pick span.lit{color:#fbbf24}
+.rv-form{background:var(--bg);border-radius:10px;padding:16px;margin-top:12px}
+/* PAGINATION */
+.pgn{display:flex;gap:4px;justify-content:center;margin-top:24px;flex-wrap:wrap}
+.pgb{width:32px;height:32px;border:1.5px solid var(--bdr);background:#fff;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px;font-family:'Syne',sans-serif;font-weight:600;transition:.15s}
+.pgb:hover{border-color:var(--acc);color:var(--acc)}.pgb.on{background:var(--acc);border-color:var(--acc);color:#fff}
+/* TOAST */
+.toast{position:fixed;bottom:20px;right:20px;background:var(--pri);color:#fff;padding:11px 16px;border-radius:10px;font-size:13px;font-family:'Syne',sans-serif;font-weight:600;box-shadow:0 8px 28px rgba(0,0,0,.2);z-index:9999;transform:translateY(80px);opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);max-width:300px;line-height:1.4}
+.toast.show{transform:translateY(0);opacity:1}
+/* NOTIFICATION BELL */
+.notif-dot{position:absolute;top:-4px;right:-4px;width:9px;height:9px;background:var(--red);border-radius:50%;border:2px solid #fff}
+/* EMPTY */
+.empty{text-align:center;padding:52px 16px}
+.empty-ico{font-size:48px;margin-bottom:10px}
+.empty h3{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:var(--pri);margin-bottom:6px}
+.empty p{color:var(--mut);font-size:13px;margin-bottom:16px}
+.spin{display:inline-block;width:28px;height:28px;border:3px solid var(--bdr);border-top-color:var(--acc);border-radius:50%;animation:sp .65s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.ld{display:flex;justify-content:center;align-items:center;padding:48px;width:100%}
+/* FAQ */
+.faq-item{background:#fff;border:1.5px solid var(--bdr);border-radius:var(--r);margin-bottom:8px;overflow:hidden}
+.faq-q{padding:13px 16px;font-family:'Syne',sans-serif;font-weight:700;font-size:14px;color:var(--pri);cursor:pointer;display:flex;justify-content:space-between;align-items:center;transition:.15s}
+.faq-q:hover{background:var(--bg)}
+.faq-a{display:none;padding:0 16px 13px;font-size:13px;color:var(--mut);line-height:1.7}
+/* CATEGORY CARD */
+.cat-card{background:var(--card);border:1.5px solid var(--bdr);border-radius:var(--r);padding:16px;text-align:center;cursor:pointer;transition:.22s}
+.cat-card:hover{box-shadow:var(--sh);transform:translateY(-3px);border-color:var(--acc2)}
+/* FEATURES */
+.feat-g{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px}
+.feat{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:var(--r);padding:18px;transition:.2s}
+.feat:hover{background:rgba(255,255,255,.13);transform:translateY(-2px)}
+.feat-ico{font-size:28px;margin-bottom:10px}
+.feat-h{font-family:'Syne',sans-serif;font-weight:700;font-size:14px;margin-bottom:5px}
+.feat-p{font-size:12px;opacity:.75;line-height:1.6}
+/* HOW IT WORKS */
+.hiw-g{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px}
+.hiw-step{text-align:center;padding:20px 12px;border-radius:var(--r);background:var(--bg);border:1.5px solid var(--bdr)}
+.step-n{width:40px;height:40px;background:var(--acc);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:15px;margin:0 auto 11px}
+.step-h{font-family:'Syne',sans-serif;font-weight:700;font-size:13px;color:var(--pri);margin-bottom:5px}
+.step-p{font-size:12px;color:var(--mut);line-height:1.6}
+/* FOOTER */
+footer{background:#0a1e40;color:#94afd4;padding:42px 20px 0}
+.ftr{max-width:1280px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:28px}
+.ftr-logo{height:56px;object-fit:contain;display:block;margin-bottom:10px}
+.ftr-desc{font-size:13px;line-height:1.75;margin-bottom:14px}
+.ftr-con a,.ftr-con span{display:flex;align-items:flex-start;gap:7px;font-size:13px;color:#94afd4;transition:.15s;margin-bottom:6px}
+.ftr-con a:hover{color:var(--acc)}
+.ftr-social{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.ftr-sico{width:32px;height:32px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:16px;color:#fff;transition:.18s;text-decoration:none}
+.ftr-sico:hover{transform:translateY(-2px);opacity:.85}
+.ftr-col-h{font-family:'Syne',sans-serif;font-weight:700;font-size:12px;color:#fff;margin-bottom:13px;text-transform:uppercase;letter-spacing:.06em}
+.ftr-lnks{display:flex;flex-direction:column;gap:7px}
+.ftr-lnks a{font-size:13px;color:#94afd4;transition:.15s;cursor:pointer}
+.ftr-lnks a:hover{color:var(--acc)}
+.ftr-bot{max-width:1280px;margin:0 auto;border-top:1px solid rgba(255,255,255,.07);display:flex;align-items:center;justify-content:space-between;padding:13px 0;font-size:12px;flex-wrap:wrap;gap:6px;margin-top:30px}
+.pay-ics{display:flex;gap:5px}
+.pi-b{background:rgba(255,255,255,.1);color:#fff;padding:3px 8px;border-radius:4px;font-size:11px;font-weight:700;font-family:'Syne',sans-serif}
+/* RESPONSIVE */
+@media(max-width:960px){.sidebar{display:none}.cart-g,.co-g,.ct-g,.pd-g{grid-template-columns:1fr}.qv-in{flex-direction:column}.qv-img{width:100%;height:170px;border-radius:18px 18px 0 0;min-height:unset}.ftr{grid-template-columns:1fr 1fr}.admin-g{grid-template-columns:1fr}.settings-g{grid-template-columns:1fr}}
+@media(max-width:620px){.topbar{display:none}.hdr{padding:0 12px;gap:8px}.g3{grid-template-columns:1fr 1fr}.g4{grid-template-columns:1fr 1fr}.ftr{grid-template-columns:1fr}.hero{padding:32px 12px 28px}}
+@media(max-width:400px){.g3,.g4{grid-template-columns:1fr}}
+
+/* Currency badge */
+.curr-badge{background:var(--acc);color:#fff;font-size:11px;font-weight:700;font-family:'Syne',sans-serif;padding:2px 8px;border-radius:20px;margin-left:6px;cursor:pointer}
+/* Notification bell */
+.notif-bell{position:relative;cursor:pointer}
+.notif-dot{position:absolute;top:-3px;right:-3px;width:10px;height:10px;background:var(--red);border-radius:50%;border:2px solid #fff}
+/* Notification panel */
+.notif-panel{position:fixed;top:76px;right:16px;width:340px;max-height:480px;background:#fff;border:1.5px solid var(--bdr);border-radius:var(--r);box-shadow:0 12px 40px rgba(0,0,0,.15);z-index:450;overflow:hidden;display:none}
+.notif-panel.open{display:flex;flex-direction:column}
+.notif-hdr{padding:14px 16px;border-bottom:1.5px solid var(--bdr);display:flex;align-items:center;justify-content:space-between;font-family:'Syne',sans-serif;font-weight:700;font-size:14px;color:var(--pri)}
+.notif-list{overflow-y:auto;flex:1}
+.notif-item{padding:12px 16px;border-bottom:1px solid var(--bdr);cursor:pointer;transition:.15s}
+.notif-item:hover{background:var(--bg)}.notif-item.unread{background:#fff7ed}
+.notif-type{font-size:11px;color:var(--acc);font-weight:700;text-transform:uppercase;margin-bottom:3px}
+.notif-title{font-size:13px;font-weight:600;color:var(--pri);margin-bottom:2px}
+.notif-msg{font-size:12px;color:var(--mut);line-height:1.5;white-space:pre-line}
+.notif-time{font-size:11px;color:var(--mut);margin-top:4px}
+
+
+/* Admin Login Button */
+.btn-admin-login{background:var(--pri);color:#fff;border:none;border-radius:8px;padding:7px 14px;font-family:'Syne',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:.18s;display:flex;align-items:center;gap:5px;white-space:nowrap}
+.btn-admin-login:hover{background:var(--acc)}
+/* Hide admin login btn when logged in as admin */
+.admin-active .btn-admin-login{display:none!important}
+
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="tbl">
+    <a href="tel:+971527513861">📞 +971 527 513 861 (UAE)</a>
+    <a href="tel:+918675341000">📞 +91 867 534 1000 (India)</a>
+    <a href="mailto:info.deltaprojectsolution@gmail.com">✉️ info.deltaprojectsolution@gmail.com</a>
+    <a href="https://wa.me/971527513861" target="_blank">💬 WhatsApp</a>
+  </div>
+  <div class="tbr">
+    <a onclick="nav('faq')" style="cursor:pointer">FAQs</a>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header>
+  <div class="hdr">
+    <div class="logo" onclick="nav('home')">
+      <img src="/static/delta-logo.jpeg" alt="Delta" onerror="this.style.display='none';document.getElementById('logoTxt').style.display='block'"/>
+      <span class="logo-txt" id="logoTxt" style="display:none">DELTA <span>PROJECT HUB</span></span>
+    </div>
+    <div class="srch">
+      <input type="text" id="gs" placeholder="Search projects…" onkeydown="if(event.key==='Enter')doSearch()"/>
+      <button onclick="doSearch()">🔍</button>
+    </div>
+    <nav>
+      <span class="nl on" onclick="nav('home')" id="nl-home">Home</span>
+      <div class="ni">
+        <span class="nl" onclick="nav('shop')" id="nl-shop">Projects ▾</span>
+        <div class="drop" id="catDrop"></div>
+      </div>
+      <span class="nl" onclick="nav('blog')" id="nl-blog">Blog</span>
+      <span class="nl" onclick="nav('contact')" id="nl-contact">Contact</span>
+    </nav>
+    <div class="hdr-r">
+      <button class="currency-toggle" onclick="toggleCurrency()" id="curBtn" title="Switch currency">🌍 INR ₹</button>
+      <button class="ib" onclick="nav('wishlist')" title="Wishlist">♡<span class="bcnt" id="wCnt">0</span></button>
+      <button class="ib admin-bell-btn" id="bellBtn" onclick="toggleNotifPanel()" title="Notifications" style="display:none">
+        🔔<span class="notif-dot" id="bellDot" style="display:none"></span>
+      </button>
+      <button class="btn-cart-h" onclick="nav('cart')">🛒 <span id="cCnt">0</span></button>
+      <button class="btn-admin-login" id="adminLoginBtn" onclick="openAuth()" title="Admin Login">
+        🔐 Admin
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- CATBAR -->
+<div class="catbar"><div class="catbar-in" id="catBar"></div></div>
+
+<!-- ═══════════════ PAGES ═══════════════ -->
+
+<!-- HOME -->
+<div class="page on" id="p-home">
+  <section class="hero">
+    <h1>Complete <em>Engineering Projects</em><br/>Delivered to Your Door</h1>
+    <p>Pre-installed working kits for Engineering &amp; Diploma students. Source code, circuit diagrams, and full documentation included.</p>
+    <div class="hero-btns">
+      <button class="btn bp lg" onclick="nav('shop')">Browse All Projects</button>
+      <button class="btn lg" style="background:transparent;border:2px solid rgba(255,255,255,.45);color:#fff" onclick="document.getElementById('hiw').scrollIntoView({behavior:'smooth'})">How It Works</button>
+    </div>
+    <div class="hero-stats">
+      <div><div class="stn">500+</div><div class="stl">Projects Available</div></div>
+      <div><div class="stn">12K+</div><div class="stl">Happy Students</div></div>
+      <div><div class="stn">98%</div><div class="stl">Success Rate</div></div>
+      <div><div class="stn">24/7</div><div class="stl">Expert Support</div></div>
+    </div>
+  </section>
+
+  <section class="sec sec-bg">
+    <div class="wrap">
+      <div class="slbl">Top Picks</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:20px">
+        <div class="sh" style="margin-bottom:0">Featured <span>Projects</span></div>
+        <button class="btn bo" onclick="nav('shop')">View All →</button>
+      </div>
+      <div class="g3" id="featGrid"><div class="ld"><div class="spin"></div></div></div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="wrap">
+      <div class="slbl">Browse By Domain</div>
+      <div class="sh">Project <span>Categories</span></div>
+      <div class="g4" id="catShow"></div>
+    </div>
+  </section>
+
+  <section class="sec sec-dark">
+    <div class="wrap">
+      <div class="slbl">Why Choose Us</div>
+      <div class="sh">Everything You Need to <span>Ace Your Project</span></div>
+      <div class="feat-g">
+        <div class="feat"><div class="feat-ico">📦</div><div class="feat-h">Pre-Installed &amp; Ready</div><div class="feat-p">Hardware kits arrive fully assembled and tested.</div></div>
+        <div class="feat"><div class="feat-ico">📄</div><div class="feat-h">Full Documentation</div><div class="feat-p">Circuit diagrams, report templates, PPT slides included.</div></div>
+        <div class="feat"><div class="feat-ico">💻</div><div class="feat-h">Source Code Included</div><div class="feat-p">Clean, commented source code for every project.</div></div>
+        <div class="feat"><div class="feat-ico">🎓</div><div class="feat-h">Viva Preparation</div><div class="feat-p">Free viva prep support and online demo calls.</div></div>
+        <div class="feat"><div class="feat-ico">🚀</div><div class="feat-h">Fast Turnaround</div><div class="feat-p">Quick completion across UAE &amp; India.</div></div>
+        <div class="feat"><div class="feat-ico">🔧</div><div class="feat-h">Custom Projects</div><div class="feat-p">We build tailored solutions for your requirements.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec sec-bg" id="hiw">
+    <div class="wrap">
+      <div class="slbl">Simple Process</div>
+      <div class="sh">How It <span>Works</span></div>
+      <div class="hiw-g">
+        <div class="hiw-step"><div class="step-n">1</div><div class="step-h">Browse &amp; Select</div><div class="step-p">Search 500+ projects. Filter by domain, tech, or budget.</div></div>
+        <div class="hiw-step"><div class="step-n">2</div><div class="step-h">Place Your Order</div><div class="step-p">Add to cart and checkout via WhatsApp, UPI, or bank transfer.</div></div>
+        <div class="hiw-step"><div class="step-n">3</div><div class="step-h">We Build &amp; Test</div><div class="step-p">Engineers assemble, code, and verify your project.</div></div>
+        <div class="hiw-step"><div class="step-n">4</div><div class="step-h">Receive &amp; Demo</div><div class="step-p">Get your kit + docs. We guide you through the demo.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="wrap">
+      <div class="slbl">Latest Articles</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:20px">
+        <div class="sh" style="margin-bottom:0">From Our <span>Blog</span></div>
+        <button class="btn bo" onclick="nav('blog')">All Articles →</button>
+      </div>
+      <div class="blog-g" id="homeBlogs"><div class="ld"><div class="spin"></div></div></div>
+    </div>
+  </section>
+
+  <section class="sec sec-dark" style="text-align:center">
+    <div class="wrap">
+      <div class="sh">Get <span>Latest Projects</span> in Your Inbox</div>
+      <p style="opacity:.8;margin-bottom:18px">Subscribe to get notified about new listings and exclusive offers.</p>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <input type="email" id="nlEmail" placeholder="Enter your email" style="padding:10px 15px;border-radius:9px;border:none;font-size:14px;font-family:inherit;width:280px;max-width:100%;outline:none"/>
+        <button class="btn bp" onclick="subscribeNL()">Subscribe →</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- SHOP -->
+<div class="page" id="p-shop">
+  <div class="shop-w">
+    <aside class="sidebar">
+      <div class="sb"><div class="sb-h">Categories</div><div id="sbCats"></div></div>
+      <div class="sb">
+        <div class="sb-h">Price Range (<span id="sbCurLabel">₹</span>)</div>
+        <div class="pi"><input type="number" id="minP" placeholder="Min" value="0"/><input type="number" id="maxP" placeholder="Max" value="20000"/></div>
+        <button class="btn bs sm bf" style="margin-top:8px" onclick="loadProds()">Apply Filter</button>
+      </div>
+      <div class="sb">
+        <div class="sb-h">Level</div>
+        <label style="display:flex;gap:7px;align-items:center;padding:6px 0;font-size:13px"><input type="checkbox" id="fFinal" checked/> Final Year</label>
+        <label style="display:flex;gap:7px;align-items:center;padding:6px 0;font-size:13px"><input type="checkbox" id="fMini" checked/> Mini Project</label>
+      </div>
+    </aside>
+    <div class="cnt">
+      <div class="bc-crumb"><a onclick="nav('home')">Home</a> › <span id="shopBC">All Projects</span></div>
+      <div class="cnt-hdr">
+        <div style="font-family:'Syne',sans-serif;font-size:19px;font-weight:800;color:var(--pri)" id="shopTitle">Engineering Projects</div>
+        <div class="rb">
+          <span style="font-size:12px;color:var(--mut)" id="rCnt"></span>
+          <select class="ss" id="sortS" onchange="loadProds()">
+            <option value="default">Default</option>
+            <option value="popular">Most Popular</option>
+            <option value="newest">Newest</option>
+            <option value="price-asc">Price ↑</option>
+            <option value="price-desc">Price ↓</option>
+          </select>
+          <div class="vt">
+            <button class="vb on" id="vgB" onclick="setView('grid')">⊞</button>
+            <button class="vb" id="vlB" onclick="setView('list')">☰</button>
+          </div>
+        </div>
+      </div>
+      <div class="g3" id="prodGrid"></div>
+      <div class="pgn" id="pgn"></div>
+    </div>
+  </div>
+</div>
+
+<!-- PRODUCT DETAIL -->
+<div class="page" id="p-product">
+  <div class="pd-w">
+    <div class="bc-crumb" id="pdBC" style="margin-bottom:16px"></div>
+    <div class="pd-g" id="pdMain"></div>
+    <div id="pdTabs"></div>
+    <div id="pdRel" style="margin-top:32px"></div>
+  </div>
+</div>
+
+<!-- CART -->
+<div class="page" id="p-cart">
+  <div class="cart-w">
+    <div class="bc-crumb" style="margin-bottom:14px"><a onclick="nav('home')">Home</a> › Cart</div>
+    <h2 style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--pri);margin-bottom:18px">🛒 Shopping Cart</h2>
+    <div id="cartBody"></div>
+  </div>
+</div>
+
+<!-- CHECKOUT -->
+<div class="page" id="p-checkout">
+  <div class="co-w">
+    <div class="bc-crumb" style="margin-bottom:14px"><a onclick="nav('home')">Home</a> › <a onclick="nav('cart')">Cart</a> › Checkout</div>
+    <h2 style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--pri);margin-bottom:18px">Checkout</h2>
+    <div class="co-g">
+      <div>
+        <div class="fbox">
+          <div class="fh">Your Details</div>
+          <div class="fg"><label>Full Name *</label><input type="text" id="coName" placeholder="Your full name"/></div>
+          <div class="fg-row">
+            <div class="fg"><label>Email</label><input type="email" id="coEmail" placeholder="email@example.com"/></div>
+            <div class="fg"><label>Phone / WhatsApp *</label><input type="tel" id="coPhone" placeholder="+971 or +91"/></div>
+          </div>
+          <div class="fg"><label>College / University</label><input type="text" id="coCollege" placeholder="Your institution"/></div>
+          <div class="fg"><label>Delivery Address</label><textarea id="coAddr" rows="3" placeholder="Address for hardware delivery"></textarea></div>
+          <div class="fg"><label>Notes</label><textarea id="coNotes" rows="2" placeholder="Any custom requirements…"></textarea></div>
+        </div>
+        <div class="fbox" style="margin-top:12px">
+          <div class="fh">Payment Method</div>
+          <div class="rg">
+            <label class="ro on" onclick="selPay(this)"><input type="radio" name="pm" value="whatsapp" checked/> 💬 <div><strong>WhatsApp Order</strong><div style="font-size:12px;color:var(--mut)">Contact us on WhatsApp to confirm &amp; pay</div></div></label>
+            <label class="ro" onclick="selPay(this)"><input type="radio" name="pm" value="upi"/> 📱 <div><strong>UPI / QR Payment</strong><div style="font-size:12px;color:var(--mut)">Pay via any UPI app</div></div></label>
+            <label class="ro" onclick="selPay(this)"><input type="radio" name="pm" value="bank"/> 🏦 <div><strong>Bank Transfer</strong><div style="font-size:12px;color:var(--mut)">NEFT / IMPS / Wire transfer</div></div></label>
+          </div>
+        </div>
+        <button class="btn bp lg bf" style="margin-top:12px" onclick="placeOrder()">Place Order →</button>
+      </div>
+      <div>
+        <div class="sum-box">
+          <div class="sb-h">Order Summary</div>
+          <div id="coSum"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- WISHLIST -->
+<div class="page" id="p-wishlist">
+  <div class="wl-w">
+    <div class="bc-crumb" style="margin-bottom:14px"><a onclick="nav('home')">Home</a> › Wishlist</div>
+    <h2 style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--pri);margin-bottom:18px">❤️ My Wishlist</h2>
+    <div id="wlBody"></div>
+  </div>
+</div>
+
+<!-- BLOG -->
+<div class="page" id="p-blog">
+  <div class="blog-w">
+    <div class="bc-crumb" style="margin-bottom:14px"><a onclick="nav('home')">Home</a> › Blog</div>
+    <h2 style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--pri);margin-bottom:18px">📰 Articles &amp; Guides</h2>
+    <div class="blog-g" id="blogGrid"><div class="ld"><div class="spin"></div></div></div>
+  </div>
+</div>
+
+<!-- BLOG DETAIL -->
+<div class="page" id="p-blog-detail">
+  <div style="max-width:820px;margin:0 auto;padding:24px 20px">
+    <div class="bc-crumb" style="margin-bottom:14px"><a onclick="nav('home')">Home</a> › <a onclick="nav('blog')">Blog</a> › <span id="bdBC"></span></div>
+    <div id="bdBody"></div>
+  </div>
+</div>
+
+<!-- CONTACT -->
+<div class="page" id="p-contact">
+  <div class="ct-w">
+    <div class="bc-crumb" style="margin-bottom:14px"><a onclick="nav('home')">Home</a> › Contact</div>
+    <h2 style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--pri);margin-bottom:18px">Get In Touch</h2>
+    <div class="ct-g">
+      <div id="contactInfo"></div>
+      <div>
+        <div class="fbox">
+          <div class="fh">Send an Enquiry</div>
+          <div class="fg"><label>Full Name *</label><input type="text" id="ctName" placeholder="Your name"/></div>
+          <div class="fg"><label>Phone / WhatsApp *</label><input type="tel" id="ctPhone" placeholder="+971 or +91"/></div>
+          <div class="fg"><label>Email</label><input type="email" id="ctEmail" placeholder="email@example.com"/></div>
+          <div class="fg"><label>Subject</label><input type="text" id="ctSubj" placeholder="Project enquiry…"/></div>
+          <div class="fg"><label>Message *</label><textarea id="ctMsg" rows="5" placeholder="Describe your requirements…"></textarea></div>
+          <button class="btn bp bf" onclick="submitEnq()">Send Message →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FAQ -->
+<div class="page" id="p-faq">
+  <div class="sec sec-bg">
+    <div class="wrap" style="max-width:720px">
+      <div class="bc-crumb" style="margin-bottom:12px"><a onclick="nav('home')">Home</a> › FAQs</div>
+      <div class="sh">Frequently Asked <span>Questions</span></div>
+      <div id="faqList"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ORDER SUCCESS -->
+<div class="page" id="p-success">
+  <div style="max-width:560px;margin:60px auto;padding:20px;text-align:center">
+    <div style="font-size:68px;margin-bottom:12px">🎉</div>
+    <h2 style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:var(--pri);margin-bottom:8px">Order Placed Successfully!</h2>
+    <p style="color:var(--mut);margin-bottom:5px">Order: <strong id="orderNum" style="color:var(--acc)"></strong></p>
+    <p style="color:var(--mut);margin-bottom:22px;font-size:14px">We will contact you on WhatsApp to confirm payment and dispatch.</p>
+    <a id="successWA" href="https://wa.me/971527513861" target="_blank" class="btn bw lg" style="margin-right:8px;display:inline-flex">💬 Chat on WhatsApp</a>
+    <button class="btn bs lg" onclick="nav('home')">Continue Shopping</button>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div class="page" id="p-admin">
+  <div class="admin-w">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px">
+      <div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:var(--pri)">⚙️ Admin Dashboard</div>
+      <div style="display:flex;gap:7px">
+        <button class="btn bp sm" onclick="openPF()">+ Add Project</button>
+        <button class="btn bo sm" onclick="adminLogout()">Logout</button>
+      </div>
+    </div>
+    <div class="admin-g">
+      <div class="an">
+        <div class="an-h">Menu</div>
+        <div class="an-l on" onclick="aS('dash')" id="an-dash">📊 Dashboard</div>
+        <div class="an-l" onclick="aS('projects')" id="an-projects">📦 Projects</div>
+        <div class="an-l" onclick="aS('orders')" id="an-orders">🛒 Orders</div>
+        <div class="an-l" onclick="aS('enquiries')" id="an-enquiries">📧 Enquiries</div>
+        <div class="an-l" onclick="aS('reviews')" id="an-reviews">⭐ Reviews</div>
+        <div class="an-l" onclick="aS('newsletter')" id="an-newsletter">📨 Newsletter</div>
+        <div class="an-l" onclick="aS('notifications')" id="an-notifications">🔔 Notifications</div>
+        <div class="an-l" onclick="aS('settings')" id="an-settings">⚙️ Site Settings</div>
+      </div>
+      <div id="aPanel"></div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="ftr">
+    <div>
+      <img class="ftr-logo" src="/static/delta-logo.jpeg" alt="Delta" onerror="this.style.display='none'"/>
+      <p class="ftr-desc" id="ftr-desc">Delta Project &amp; Solution provides complete, pre-installed engineering project solutions for Engineering &amp; Diploma students across UAE and India.</p>
+      <div class="ftr-con" id="ftr-con"></div>
+      <div class="ftr-social" id="ftr-social"></div>
+    </div>
+    <div>
+      <div class="ftr-col-h">Our Projects</div>
+      <div class="ftr-lnks" id="ftrCats"></div>
+    </div>
+    <div>
+      <div class="ftr-col-h">Quick Links</div>
+      <div class="ftr-lnks">
+        <a onclick="nav('home')">Home</a>
+        <a onclick="nav('shop')">All Projects</a>
+        <a onclick="nav('blog')">Blog</a>
+        <a onclick="nav('contact')">Contact Us</a>
+        <a onclick="nav('faq')">FAQs</a>
+      </div>
+    </div>
+    <div>
+      <div class="ftr-col-h">Support</div>
+      <div class="ftr-lnks">
+        <a onclick="nav('contact')">Custom Project</a>
+        <a onclick="nav('faq')">How It Works</a>
+        <a>Privacy Policy</a>
+        <a>Terms &amp; Conditions</a>
+        <a>Refund Policy</a>
+      </div>
+    <div id="ftrSocial"></div>
+    </div>
+  </div>
+  <div class="ftr-bot">
+    <span id="ftr-copy">© 2025 Delta Project &amp; Solution. All rights reserved.</span>
+    <div class="pay-ics"><span class="pi-b">UPI</span><span class="pi-b">VISA</span><span class="pi-b">MC</span><span class="pi-b">RuPay</span><span class="pi-b">Wire</span></div>
+  </div>
+</footer>
+
+
+<!-- AUTH MODAL -->
+<div class="mo" id="moAuth" onclick="if(event.target===this)cM('moAuth')">
+  <div class="md" style="max-width:420px">
+    <button class="md-close" onclick="cM('moAuth')">✕</button>
+    <div style="padding:28px 28px 24px">
+      <div style="text-align:center;margin-bottom:16px">
+        <img src="/static/delta-logo.jpeg" style="height:46px;object-fit:contain;margin:0 auto 8px" onerror="this.style.display='none'"/>
+        <h2 style="font-family:'Syne',sans-serif;font-size:19px;font-weight:800;color:var(--pri)">Delta Project Hub</h2>
+        <p style="font-size:13px;color:var(--mut)">Admin login or create a customer account</p>
+      </div>
+      <div style="display:flex;border-bottom:2px solid var(--bdr);margin-bottom:16px">
+        <div class="auth-tab on" onclick="authSw('login',this)">Login</div>
+        <div class="auth-tab" onclick="authSw('register',this)">Register</div>
+      </div>
+      <div id="loginF">
+        <div class="fg"><label>Email Address</label><input type="email" id="liE" placeholder="admin@deltaprojecthub.com"/></div>
+        <div class="fg"><label>Password</label><input type="password" id="liP" placeholder="Enter your password" onkeydown="if(event.key==='Enter')doLogin()"/></div>
+        <button class="btn bp btn-full" onclick="doLogin()" style="margin-top:4px">Login →</button>
+        <div style="margin-top:12px;padding:10px 14px;background:#e0f2fe;border-radius:8px;font-size:12px;color:#0369a1">
+          <strong>Admin:</strong> admin@deltaprojecthub.com / admin123
+        </div>
+      </div>
+      <div id="regF" style="display:none">
+        <div class="fg"><label>Full Name *</label><input type="text" id="rgN" placeholder="Your name"/></div>
+        <div class="fg"><label>Email *</label><input type="email" id="rgE" placeholder="email@example.com"/></div>
+        <div class="fg"><label>Phone</label><input type="tel" id="rgPh" placeholder="+971 or +91"/></div>
+        <div class="fg"><label>Password *</label><input type="password" id="rgP" placeholder="Create password"/></div>
+        <button class="btn bp btn-full" onclick="doRegister()" style="margin-top:4px">Create Account →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- QUICK VIEW MODAL -->
+<div class="mo" id="moQV" onclick="if(event.target===this)cM('moQV')">
+  <div class="md">
+    <button class="md-close" onclick="cM('moQV')">✕</button>
+    <div style="display:flex;flex-wrap:wrap">
+      <div id="qvImg" style="width:260px;min-height:240px;flex-shrink:0;background:linear-gradient(135deg,#e8f0fb,#d1e3f8);display:flex;align-items:center;justify-content:center;font-size:60px;border-radius:18px 0 0 18px;overflow:hidden"></div>
+      <div style="padding:22px;flex:1;min-width:240px">
+        <div id="qvTags" style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px"></div>
+        <h2 id="qvTitle" style="font-family:'Syne',sans-serif;font-size:17px;font-weight:800;color:var(--pri);margin-bottom:6px;line-height:1.3"></h2>
+        <div id="qvPrc" style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--grn);margin-bottom:10px"></div>
+        <p id="qvDesc" style="font-size:13px;color:var(--mut);line-height:1.6;margin-bottom:12px"></p>
+        <table id="qvSpecs" style="width:100%;border-collapse:collapse;font-size:13px;margin-bottom:14px"></table>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn bp" id="qvAdd">🛒 Add to Cart</button>
+          <button class="btn bs" id="qvDetail">📋 Full Details</button>
+          <a class="btn" style="background:#25D366;color:#fff" id="qvWA" href="#" target="_blank">💬 WhatsApp</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PROJECT FORM MODAL (Admin) -->
+<div class="mo" id="moPF" onclick="if(event.target===this)cM('moPF')">
+  <div class="md" style="max-width:820px">
+    <button class="md-close" onclick="cM('moPF')">✕</button>
+    <div style="padding:26px 28px;max-height:88vh;overflow-y:auto">
+      <h2 id="pfH" style="font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:var(--pri);margin-bottom:18px">Add New Project</h2>
+
+      <!-- BASIC INFO -->
+      <div style="background:var(--bg);border-radius:10px;padding:16px;margin-bottom:14px">
+        <div style="font-family:'Syne',sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--pri);margin-bottom:12px;padding-bottom:6px;border-bottom:2px solid var(--acc)">📋 Basic Information</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div class="fg" style="grid-column:1/-1"><label>Project Title *</label><input type="text" id="pfTitle" placeholder="e.g. Smart IoT Farm Monitoring System"/></div>
+          <div class="fg"><label>Category</label><select id="pfCat"><option value="">Select category…</option></select></div>
+          <div class="fg"><label>Project Level</label><select id="pfLevel"><option>Final Year</option><option>Mini Project</option><option>Diploma</option></select></div>
+          <div class="fg"><label>Badge Text</label><input type="text" id="pfBadge" placeholder="Best Seller / New / Hot…"/></div>
+          <div class="fg"><label>Badge Color</label><select id="pfBT"><option value="o">🟠 Orange</option><option value="g">🟢 Green</option><option value="b">🔵 Blue</option></select></div>
+        </div>
+      </div>
+
+      <!-- PRICING -->
+      <div style="background:#fff7ed;border:1.5px solid #fed7aa;border-radius:10px;padding:16px;margin-bottom:14px">
+        <div style="font-family:'Syne',sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--acc);margin-bottom:12px;padding-bottom:6px;border-bottom:2px solid var(--acc)">💰 Pricing — Enter Both INR and AED</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px">
+          <div class="fg">
+            <label>Price (₹ INR) *</label>
+            <input type="number" id="pfINR" placeholder="9500" oninput="autoCalcAED()"/>
+          </div>
+          <div class="fg">
+            <label>Price (AED) *</label>
+            <input type="number" id="pfAED" placeholder="Auto-calculated" step="0.01"/>
+          </div>
+          <div class="fg">
+            <label>Old Price (₹ INR)</label>
+            <input type="number" id="pfOINR" placeholder="12000" oninput="autoCalcOldAED()"/>
+          </div>
+          <div class="fg">
+            <label>Old Price (AED)</label>
+            <input type="number" id="pfOAED" placeholder="Auto-calculated" step="0.01"/>
+          </div>
+        </div>
+        <div style="font-size:12px;color:var(--acc);margin-top:4px">
+          💡 AED is auto-calculated at 300% of base rate (0.044 × 3 = 0.132). You can override manually.
+          <button type="button" onclick="autoCalcAED();autoCalcOldAED();" style="margin-left:8px;background:var(--acc);color:#fff;border:none;border-radius:6px;padding:3px 10px;font-size:11px;cursor:pointer;font-family:inherit">↻ Recalculate AED</button>
+        </div>
+      </div>
+
+      <!-- DESCRIPTION -->
+      <div style="background:var(--bg);border-radius:10px;padding:16px;margin-bottom:14px">
+        <div style="font-family:'Syne',sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--pri);margin-bottom:12px;padding-bottom:6px;border-bottom:2px solid var(--acc)">📝 Description & Content</div>
+        <div class="fg"><label>Short Description * <small style="color:var(--mut);font-weight:400">(shown on project cards)</small></label><textarea id="pfDesc" rows="2" placeholder="1–2 sentence summary…"></textarea></div>
+        <div class="fg"><label>Project Aim / Objective</label><textarea id="pfAim" rows="3" placeholder="Main aim and objectives of the project…"></textarea></div>
+        <div class="fg"><label>Abstract <small style="color:var(--mut);font-weight:400">(full detail page)</small></label><textarea id="pfAbstract" rows="3" placeholder="Full project abstract and introduction…"></textarea></div>
+      </div>
+
+      <!-- TECHNICAL -->
+      <div style="background:var(--bg);border-radius:10px;padding:16px;margin-bottom:14px">
+        <div style="font-family:'Syne',sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--pri);margin-bottom:12px;padding-bottom:6px;border-bottom:2px solid var(--acc)">🔧 Technical Details</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div class="fg"><label>Technology / Tech Stack</label><input type="text" id="pfTech" placeholder="Arduino, ESP32, Python…"/></div>
+          <div class="fg"><label>Software Tools</label><input type="text" id="pfSW" placeholder="Arduino IDE, Blynk, Firebase…"/></div>
+          <div class="fg" style="grid-column:1/-1"><label>Hardware Components</label><input type="text" id="pfHW" placeholder="Arduino UNO, DHT11, LCD 16x2, Relay Module…"/></div>
+          <div class="fg" style="grid-column:1/-1"><label>Project Image URL</label><input type="url" id="pfImg" placeholder="https://… paste direct image link"/></div>
+          <div class="fg" style="grid-column:1/-1"><label>Tags <small style="color:var(--mut);font-weight:400">(comma separated)</small></label><input type="text" id="pfTags" placeholder="IoT, Arduino, Embedded, Smart Home…"/></div>
+        </div>
+      </div>
+
+      <!-- OPTIONS -->
+      <div style="display:flex;gap:20px;padding:10px 0;flex-wrap:wrap">
+        <label style="display:flex;gap:8px;align-items:center;cursor:pointer;font-size:14px;background:#d1fae5;padding:8px 14px;border-radius:8px"><input type="checkbox" id="pfFeat"/> ⭐ Featured on Homepage</label>
+        <label style="display:flex;gap:8px;align-items:center;cursor:pointer;font-size:14px;background:#dbeafe;padding:8px 14px;border-radius:8px"><input type="checkbox" id="pfStock" checked/> ✅ In Stock</label>
+      </div>
+
+      <input type="hidden" id="pfId"/>
+      <button class="btn bp" onclick="savePF()" style="width:100%;justify-content:center;margin-top:16px;padding:15px;font-size:15px">
+        💾 Save Project
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- NOTIFICATION PANEL -->
+<div class="notif-panel" id="notifPanel">
+  <div class="notif-hdr">
+    🔔 Notifications
+    <button onclick="markAllRead()" style="background:none;border:none;color:var(--acc);font-size:12px;cursor:pointer;font-family:inherit">Mark all read</button>
+  </div>
+  <div class="notif-list" id="notifList"><div style="padding:20px;text-align:center;color:var(--mut);font-size:13px">Loading…</div></div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ════════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════════
+const S = {
+  page:'home', cat:'', cats:[], cart:[], wish:[],
+  shopPage:1, shopTotal:0, settings:{},
+  region: 'IN',
+  currency: 'INR',
+  adminToken: localStorage.getItem('aToken') || '',
+  _slug:''
+};
+
+// ════════════════════════════════════════════
+// ROUTER
+// ════════════════════════════════════════════
+function nav(page, opts={}) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('on'));
+  const el = document.getElementById('p-'+page);
+  if (!el) return;
+  el.classList.add('on');
+  S.page = page;
+  window.scrollTo(0,0);
+  document.querySelectorAll('.nl').forEach(n => n.classList.remove('on'));
+  const nEl = document.getElementById('nl-'+page);
+  if (nEl) nEl.classList.add('on');
+  if (opts.cat !== undefined) { S.cat = opts.cat; S.shopPage = 1; }
+  if (opts.slug) S._slug = opts.slug;
+  const map = {
+    home:initHome, shop:initShop, cart:renderCart, checkout:renderCheckout,
+    wishlist:renderWL, blog:initBlog, contact:initContact,
+    faq:initFaq, admin:initAdmin,
+    product:()=>loadProd(S._slug),
+    'blog-detail':()=>loadBD(S._slug)
+  };
+  if (map[page]) setTimeout(map[page], 0);
+}
+
+// ════════════════════════════════════════════
+// API
+// ════════════════════════════════════════════
+async function api(path, opts={}) {
+  const h = {'Content-Type':'application/json'};
+  if (S.adminToken) h['Authorization'] = 'Bearer '+S.adminToken;
+  const res = await fetch(path, {...opts, headers:{...h,...(opts.headers||{})}, credentials:'include'});
+  return res.json().catch(()=>({}));
+}
+
+// ════════════════════════════════════════════
+// CURRENCY
+// ════════════════════════════════════════════
+function curSym() { return S.currency === 'AED' ? 'AED ' : '₹'; }
+function fmtP(inr, aed) {
+  if (S.currency === 'AED') return (curSym()) + fmt(aed ? Math.round(aed * 3) : Math.round(inr * 0.132));
+  return (curSym()) + fmt(inr);
+}
+function fmt(n) { return Number(n||0).toLocaleString('en-IN'); }
+function esc(s) { return (s||'').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
+function parseTags(t) { if (Array.isArray(t)) return t; try { return JSON.parse(t||'[]'); } catch { return []; } }
+
+function toggleCurrency() {
+  S.currency = S.currency === 'INR' ? 'AED' : 'INR';
+  S.region = S.currency === 'AED' ? 'AE' : 'IN';
+  localStorage.setItem('currency', S.currency);
+  localStorage.setItem('region', S.region);
+  updateCurrencyUI();
+  if (S.page === 'shop') loadProds();
+  if (S.page === 'home') loadFeatured();
+  toast(S.currency === 'AED' ? '🇦🇪 Switched to AED' : '🇮🇳 Switched to INR');
+}
+
+function updateCurrencyUI() {
+  const btn = document.getElementById('curBtn');
+  if (btn) btn.textContent = S.currency === 'AED' ? '🇦🇪 AED د.إ' : '🇮🇳 INR ₹';
+  const lbl = document.getElementById('sbCurLabel');
+  if (lbl) lbl.textContent = curSym();
+  if (S.currency === 'AED') {
+    document.getElementById('minP') && (document.getElementById('minP').value = 0);
+    document.getElementById('maxP') && (document.getElementById('maxP').value = 1000);
+  } else {
+    document.getElementById('maxP') && (document.getElementById('maxP').value = 20000);
+  }
+}
+
+// ════════════════════════════════════════════
+// REGION POPUP
+// ════════════════════════════════════════════
+// ════════════════════════════════════════════
+// BOOT
+// ════════════════════════════════════════════
+async function loadSocialFooter() {
+  const social = await api('/api/social');
+  const el = document.getElementById('ftrSocial');
+  if (!el || !social || !social.length) return;
+  const active = social.filter(s => s.active);
+  if (!active.length) return;
+  el.innerHTML = `<div style="margin-top:18px"><div class="ftr-col-h" style="margin-bottom:10px">Follow Us</div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      ${active.map(s => `<a href="${s.url}" target="_blank" style="background:rgba(255,255,255,.12);border-radius:9px;padding:8px 12px;color:#fff;font-size:20px;transition:.18s;display:inline-flex;align-items:center;gap:6px" onmouseover="this.style.background='rgba(249,115,22,.4)'" onmouseout="this.style.background='rgba(255,255,255,.12)'" title="${s.platform}">${s.icon}</a>`).join('')}
+    </div></div>`;
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  // If region already chosen, skip popup
+  if (S.region) {
+    cM('moRegion');
+    updateCurrencyUI();
+  } else {
+    // Select based on existing state
+      }
+  await Promise.all([loadSettings(), loadCats(), syncCart(), syncWish()]);
+  nav('home');
+});
+
+// ════════════════════════════════════════════
+// SETTINGS
+// ════════════════════════════════════════════
+async function loadSettings() {
+  const s = await api('/api/settings');
+  S.settings = s || {};
+  applySettings(s);
+}
+
+function applySettings(s) {
+  if (!s) return;
+  // Topbar
+  const puae = document.getElementById('tb-phone-uae');
+  if (puae && s.phone_uae) { puae.href='tel:'+s.phone_uae; puae.textContent='📞 '+s.phone_uae+' (UAE)'; }
+  const pind = document.getElementById('tb-phone-india');
+  if (pind && s.phone_india) { pind.href='tel:'+s.phone_india; pind.textContent='📞 '+s.phone_india+' (India)'; }
+  const em = document.getElementById('tb-email');
+  if (em && s.email) { em.href='mailto:'+s.email; em.textContent='✉️ '+s.email; }
+  const wa = document.getElementById('tb-wa');
+  if (wa && s.whatsapp) wa.href='https://wa.me/'+s.whatsapp.replace(/\D/g,'');
+  // Footer contact
+  const fc = document.getElementById('ftr-con');
+  if (fc) fc.innerHTML = `
+    <a href="tel:${s.phone_uae||''}">📞 ${s.phone_uae||''} (UAE)</a>
+    <a href="tel:${s.phone_india||''}">📞 ${s.phone_india||''} (India)</a>
+    <a href="https://wa.me/${(s.whatsapp||'').replace(/\D/g,'')}" target="_blank">💬 WhatsApp: ${s.whatsapp||''}</a>
+    <a href="mailto:${s.email||''}"}>✉️ ${s.email||''}</a>
+    <span>📍 India: ${s.address_india||''}</span>
+    <span>📍 UAE: ${s.address_uae||''}</span>`;
+  // Footer social
+  const fs = document.getElementById('ftr-social');
+  if (fs) {
+    const socials = [
+      {key:'facebook',ico:'f',color:'#1877F2',label:'Facebook'},
+      {key:'instagram',ico:'📷',color:'#E1306C',label:'Instagram'},
+      {key:'youtube',ico:'▶',color:'#FF0000',label:'YouTube'},
+      {key:'linkedin',ico:'in',color:'#0A66C2',label:'LinkedIn'},
+      {key:'twitter',ico:'𝕏',color:'#1DA1F2',label:'Twitter'},
+    ];
+    fs.innerHTML = socials.filter(so=>s[so.key]).map(so=>
+      `<a href="${s[so.key]}" target="_blank" class="ftr-sico" style="background:${so.color}" title="${so.label}">${so.ico}</a>`).join('');
+  }
+  // Contact page
+  const ci = document.getElementById('contactInfo');
+  if (ci) {
+    ci.innerHTML = `
+      <div class="ci"><div class="ci-ico">📞</div><div><div class="ci-lbl">Phone (UAE)</div><div class="ci-val"><a href="tel:${s.phone_uae||''}">${s.phone_uae||''}</a></div></div></div>
+      <div class="ci"><div class="ci-ico">📞</div><div><div class="ci-lbl">Phone (India)</div><div class="ci-val"><a href="tel:${s.phone_india||''}">${s.phone_india||''}</a></div></div></div>
+      <div class="ci"><div class="ci-ico">💬</div><div><div class="ci-lbl">WhatsApp</div><div class="ci-val"><a href="https://wa.me/${(s.whatsapp||'').replace(/\D/g,'')}" target="_blank">${s.whatsapp||''}</a></div></div></div>
+      <div class="ci"><div class="ci-ico">✉️</div><div><div class="ci-lbl">Email</div><div class="ci-val"><a href="mailto:${s.email||''}">${s.email||''}</a></div></div></div>
+      <div class="ci"><div class="ci-ico">📍</div><div><div class="ci-lbl">India Office</div><div class="ci-val">${s.address_india||''}</div></div></div>
+      <div class="ci"><div class="ci-ico">📍</div><div><div class="ci-lbl">UAE Office</div><div class="ci-val">${s.address_uae||''}</div></div></div>
+      <div style="margin-top:14px">
+        <div class="ci-lbl" style="font-family:'Syne',sans-serif;font-weight:700;color:var(--pri);margin-bottom:10px">Follow Us</div>
+        <div class="social-links" id="contactSocial"></div>
+      </div>`;
+    const cs = document.getElementById('contactSocial');
+    if (cs) {
+      const socials = [
+        {key:'facebook',label:'Facebook',cls:'sl-fb'},
+        {key:'instagram',label:'Instagram',cls:'sl-ig'},
+        {key:'youtube',label:'YouTube',cls:'sl-yt'},
+        {key:'linkedin',label:'LinkedIn',cls:'sl-li'},
+        {key:'twitter',label:'Twitter',cls:'sl-tw'},
+        {key:'whatsapp',label:'WhatsApp',cls:'sl-wa',url:`https://wa.me/${(s.whatsapp||'').replace(/\D/g,'')}`},
+      ];
+      cs.innerHTML = socials.filter(so=>s[so.key]||so.key==='whatsapp').map(so=>
+        `<a href="${so.url||s[so.key]}" target="_blank" class="social-link ${so.cls}">${so.label}</a>`).join('');
+    }
+  }
+  // Success page WA link
+  const swa = document.getElementById('successWA');
+  if (swa && s.whatsapp) swa.href = 'https://wa.me/'+(s.whatsapp||'').replace(/\D/g,'');
+}
+
+// ════════════════════════════════════════════
+// CATEGORIES
+// ════════════════════════════════════════════
+async function loadCats() {
+  const cats = await api('/api/categories');
+  S.cats = cats || [];
+  renderCatBar(); renderSbCats(); renderCatShow(); renderFtrCats(); renderCatDrop(); populatePfCat();
+}
+
+function renderCatBar() {
+  const el = document.getElementById('catBar');
+  if (!el) return;
+  el.innerHTML = `<span class="ctab ${!S.cat?'on':''}" onclick="filterCat('')">🏠 All</span>` +
+    S.cats.map(c=>`<span class="ctab ${S.cat===c.slug?'on':''}" onclick="filterCat('${c.slug}')">${c.icon} ${c.name}</span>`).join('');
+}
+function renderSbCats() {
+  const el = document.getElementById('sbCats'); if (!el) return;
+  const tot = S.cats.reduce((a,c)=>a+(c.project_count||0),0);
+  el.innerHTML = `<div class="sbc ${!S.cat?'on':''}" onclick="filterCat('')">All <span class="sb-cnt">${tot}</span></div>` +
+    S.cats.map(c=>`<div class="sbc ${S.cat===c.slug?'on':''}" onclick="filterCat('${c.slug}')">${c.name} <span class="sb-cnt">${c.project_count||0}</span></div>`).join('');
+}
+function renderCatShow() {
+  const el = document.getElementById('catShow'); if (!el) return;
+  el.innerHTML = S.cats.slice(0,8).map(c=>`
+    <div class="cat-card" onclick="filterCat('${c.slug}')">
+      <div style="font-size:32px;margin-bottom:8px">${c.icon}</div>
+      <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:13px;color:var(--pri)">${c.name}</div>
+      <div style="font-size:12px;color:var(--mut);margin-top:3px">${c.project_count||0} projects</div>
+    </div>`).join('');
+}
+function renderFtrCats() {
+  const el = document.getElementById('ftrCats'); if (!el) return;
+  el.innerHTML = S.cats.slice(0,7).map(c=>`<a onclick="filterCat('${c.slug}')">${c.name}</a>`).join('');
+}
+function renderCatDrop() {
+  const el = document.getElementById('catDrop'); if (!el) return;
+  el.innerHTML = S.cats.map(c=>`<a onclick="filterCat('${c.slug}')">${c.icon} ${c.name}</a>`).join('');
+}
+function populatePfCat() {
+  const sel = document.getElementById('pfCat'); if (!sel) return;
+  sel.innerHTML = '<option value="">Select category…</option>' + S.cats.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
+}
+function filterCat(slug) {
+  S.cat = slug; S.shopPage = 1;
+  renderCatBar(); renderSbCats();
+  if (S.page !== 'shop') nav('shop'); else loadProds();
+}
+
+// ════════════════════════════════════════════
+// HOME
+// ════════════════════════════════════════════
+async function initHome() { loadFeatured(); loadHomeBlogs(); }
+async function loadFeatured() {
+  const el = document.getElementById('featGrid');
+  const d = await api('/api/projects?featured=1&per_page=6&currency='+S.currency);
+  el.innerHTML = d.projects?.length ? d.projects.map(pCard).join('') :
+    `<div class="empty" style="grid-column:1/-1"><div class="empty-ico">📭</div><h3>No featured projects yet</h3></div>`;
+}
+async function loadHomeBlogs() {
+  const el = document.getElementById('homeBlogs'); if (!el) return;
+  const posts = await api('/api/blog');
+  el.innerHTML = posts?.length ? posts.slice(0,3).map(blogCard).join('') :
+    `<div class="empty"><div class="empty-ico">📰</div><h3>No posts yet</h3></div>`;
+}
+
+// ════════════════════════════════════════════
+// SHOP
+// ════════════════════════════════════════════
+function initShop() { renderSbCats(); loadProds(); }
+
+async function loadProds() {
+  const el = document.getElementById('prodGrid'); if (!el) return;
+  el.innerHTML = `<div class="ld"><div class="spin"></div></div>`;
+  const sort = document.getElementById('sortS')?.value||'default';
+  const minP = document.getElementById('minP')?.value||0;
+  const maxP = document.getElementById('maxP')?.value||999999;
+  const params = new URLSearchParams({sort,min_price:minP,max_price:maxP,page:S.shopPage,per_page:9,category:S.cat,currency:S.currency});
+  const d = await api('/api/projects?'+params);
+  S.shopTotal = d.total||0;
+  const catName = S.cat ? (S.cats.find(c=>c.slug===S.cat)?.name||S.cat) : 'All Projects';
+  const t = document.getElementById('shopTitle'); if (t) t.textContent = catName;
+  const bc = document.getElementById('shopBC'); if (bc) bc.textContent = catName;
+  const rc = document.getElementById('rCnt'); if (rc) rc.textContent = `${(d.projects||[]).length} of ${d.total||0} results`;
+  if (!d.projects?.length) {
+    el.innerHTML = `<div class="empty" style="grid-column:1/-1"><div class="empty-ico">🔍</div><h3>No projects found</h3><p>Try a different filter</p></div>`;
+    renderPgn(0,9,1); return;
+  }
+  el.innerHTML = d.projects.map(pCard).join('');
+  renderPgn(d.total,9,S.shopPage);
+}
+
+function renderPgn(total,pp,cur) {
+  const el = document.getElementById('pgn'); if (!el) return;
+  const pages = Math.ceil(total/pp);
+  if (pages<=1) { el.innerHTML=''; return; }
+  el.innerHTML = Array.from({length:pages},(_,i)=>
+    `<button class="pgb ${i+1===cur?'on':''}" onclick="goPage(${i+1})">${i+1}</button>`).join('');
+}
+function goPage(n) { S.shopPage=n; loadProds(); window.scrollTo(0,100); }
+function setView(v) {
+  const el = document.getElementById('prodGrid');
+  document.getElementById('vgB').classList.toggle('on',v==='grid');
+  document.getElementById('vlB').classList.toggle('on',v==='list');
+  if (el) el.style.gridTemplateColumns = v==='list'?'1fr':'repeat(auto-fill,minmax(280px,1fr))';
+}
+
+// ════════════════════════════════════════════
+// PRODUCT CARD
+// ════════════════════════════════════════════
+function pCard(p) {
+  const tags = parseTags(p.tags);
+  const inW = S.wish.some(w=>w.project_id===p.id);
+  const pInr = p.price_inr || p.price || 0;
+  const pAed = p.price_aed || Math.round(pInr*0.044);
+  const oInr = p.old_price_inr || p.old_price;
+  const oAed = p.old_price_aed;
+  const curP = S.currency==='AED' ? pAed : pInr;
+  const curO = S.currency==='AED' ? oAed : oInr;
+  const disc = curO ? Math.round((1-curP/curO)*100) : 0;
+  return `<div class="pc">
+    <div class="pc-img-wrap">
+      ${p.badge?`<span class="pc-badge ${p.badge_type||'o'}">${p.badge}</span>`:''}
+      ${disc>0?`<span class="pc-disc">${disc}% OFF</span>`:''}
+      <button class="pc-wish ${inW?'on':''}" onclick="toggleWish(event,${p.id})">${inW?'♥':'♡'}</button>
+      ${p.image_url
+        ?`<img class="pc-img" src="${p.image_url}" alt="${esc(p.title)}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+          <div class="pc-ph" style="display:none">🔌</div>`
+        :`<div class="pc-ph">🔌</div>`}
+    </div>
+    <div class="pc-body">
+      <div class="pc-tags">${tags.slice(0,3).map(t=>`<span class="ptag">${t}</span>`).join('')}</div>
+      <div class="pc-title" onclick="openProd('${p.slug}')">${p.title}</div>
+      <div class="pc-desc">${p.description||''}</div>
+      <div class="pc-foot">
+        <div>
+          <div class="prc">${curSym()}${fmt(curP)}</div>
+          ${curO?`<div class="prc-old">${curSym()}${fmt(curO)}</div>`:''}
+        </div>
+        <button class="btn bs sm" onclick="addCart(${p.id},1)">🛒 Add</button>
+      </div>
+      <div class="pc-acts">
+        <button onclick="openQV(${p.id})">🔍 Quick View</button>
+        <button onclick="waEnq('${esc(p.title)}')">💬 Enquire</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ════════════════════════════════════════════
+// PRODUCT DETAIL
+// ════════════════════════════════════════════
+function openProd(slug) { nav('product',{slug}); }
+
+async function loadProd(slug) {
+  if (!slug) return;
+  const mg = document.getElementById('pdMain');
+  const tb = document.getElementById('pdTabs');
+  const rl = document.getElementById('pdRel');
+  const bc = document.getElementById('pdBC');
+  mg.innerHTML=`<div class="ld" style="grid-column:1/-1"><div class="spin"></div></div>`;
+  tb.innerHTML=''; rl.innerHTML='';
+  const p = await api('/api/projects/'+slug);
+  if (p.error) { mg.innerHTML=`<div class="empty" style="grid-column:1/-1"><div class="empty-ico">❌</div><h3>Not found</h3></div>`; return; }
+  const tags = parseTags(p.tags);
+  const pInr = p.price_inr||p.price||0;
+  const pAed = p.price_aed||Math.round(pInr*0.044);
+  const oInr = p.old_price_inr||p.old_price;
+  const curP = S.currency==='AED'?pAed:pInr;
+  const curO = S.currency==='AED'?p.old_price_aed:oInr;
+  if (bc) bc.innerHTML=`<a onclick="nav('home')">Home</a> › <a onclick="nav('shop')">Projects</a> › ${p.title}`;
+
+  mg.innerHTML=`
+    <div class="pd-img-box">
+      ${p.image_url
+        ?`<img src="${p.image_url}" alt="${esc(p.title)}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+           <div style="font-size:80px;display:none;align-items:center;justify-content:center;width:100%;height:100%">🔌</div>`
+        :`<div style="font-size:80px">🔌</div>`}
+    </div>
+    <div class="pd-info">
+      <div class="pc-tags">${tags.map(t=>`<span class="ptag">${t}</span>`).join('')}</div>
+      <h1>${p.title}</h1>
+      ${curO?`<div style="font-size:12px;color:var(--mut);text-decoration:line-through">${curSym()}${fmt(curO)}</div>`:''}
+      <div class="pd-prc">${curSym()}${fmt(curP)}</div>
+      <p style="font-size:13px;color:var(--mut);line-height:1.7;margin:9px 0">${p.description||''}</p>
+      <div class="pd-meta">
+        <div class="pd-mi"><label>Technology</label><span>${p.tech_stack||'—'}</span></div>
+        <div class="pd-mi"><label>Level</label><span>${p.level||'—'}</span></div>
+        <div class="pd-mi"><label>Category</label><span>${p.category_name||'—'}</span></div>
+        <div class="pd-mi"><label>Stock</label><span style="color:${p.in_stock?'var(--grn)':'var(--red)'}">${p.in_stock?'✅ Available':'❌ Out of Stock'}</span></div>
+      </div>
+      <strong style="font-family:'Syne',sans-serif;font-size:11px;color:var(--pri)">INCLUDES:</strong>
+      <div class="incl-list">
+        ${['Source Code','Circuit Diagram','Project Report','PPT Slides','Viva Guide'].map(i=>`<span class="incl-tag">✓ ${i}</span>`).join('')}
+      </div>
+      <div style="display:flex;align-items:center;gap:9px;margin-top:14px;flex-wrap:wrap">
+        <div class="qty-w">
+          <button onclick="chQty(-1)">−</button>
+          <input type="number" id="pdQty" value="1" min="1"/>
+          <button onclick="chQty(1)">+</button>
+        </div>
+        <button class="btn bp" onclick="addCartQ(${p.id})">🛒 Add to Cart</button>
+        <button class="btn bs" onclick="toggleWish(null,${p.id})">♡ Wishlist</button>
+      </div>
+      <div style="display:flex;gap:7px;margin-top:9px;flex-wrap:wrap">
+        <a class="btn bw" href="https://wa.me/${(S.settings.whatsapp||'971527513861').replace(/\D/g,'')}?text=${encodeURIComponent('Hi, I want to order: '+p.title)}" target="_blank">💬 WhatsApp</a>
+        <button class="btn bo" onclick="addCartQ(${p.id});nav('checkout')">⚡ Buy Now</button>
+      </div>
+    </div>`;
+
+  const revs = p.reviews||[];
+  tb.innerHTML=`
+    <div class="tabs" style="margin-top:26px">
+      <div class="tbb on" onclick="swTab('td',this)">Description</div>
+      <div class="tbb" onclick="swTab('ts',this)">Specifications</div>
+      <div class="tbb" onclick="swTab('th',this)">Hardware</div>
+      <div class="tbb" onclick="swTab('tr',this)">Reviews (${revs.length})</div>
+    </div>
+    <div class="tab-c on" id="td">
+      <h3 style="font-family:'Syne',sans-serif;color:var(--pri);margin-bottom:7px;font-size:15px">Project Aim</h3>
+      <p style="font-size:13px;color:var(--mut);line-height:1.8">${p.aim||p.description||''}</p>
+      ${p.abstract?`<h3 style="font-family:'Syne',sans-serif;color:var(--pri);margin:14px 0 7px;font-size:15px">Abstract</h3><p style="font-size:13px;color:var(--mut);line-height:1.8">${p.abstract}</p>`:''}
+    </div>
+    <div class="tab-c" id="ts">
+      <table class="spec-t">
+        <tr><td>Technology</td><td>${p.tech_stack||'—'}</td></tr>
+        <tr><td>Level</td><td>${p.level||'—'}</td></tr>
+        <tr><td>Category</td><td>${p.category_name||'—'}</td></tr>
+        <tr><td>Software Tools</td><td>${p.software_tools||'—'}</td></tr>
+        <tr><td>Includes</td><td>Source Code, Circuit Diagram, Report, PPT</td></tr>
+        <tr><td>Price (INR)</td><td>₹${fmt(pInr)}</td></tr>
+        <tr><td>Price (AED)</td><td>AED ${fmt(pAed)}</td></tr>
+      </table>
+    </div>
+    <div class="tab-c" id="th">
+      <p style="font-size:13px;color:var(--mut);line-height:1.8">${p.hardware_components||'Contact us for component list.'}</p>
+    </div>
+    <div class="tab-c" id="tr">
+      ${revs.length?revs.map(r=>`<div class="rv-card"><div class="rv-stars">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</div><div class="rv-txt">${r.review||''}</div><div class="rv-auth">— ${r.user_name} · ${(r.created_at||'').split('T')[0]}</div></div>`).join(''):'<p style="color:var(--mut);font-size:13px;margin-bottom:10px">No reviews yet.</p>'}
+      <div class="rv-form">
+        <strong style="font-family:'Syne',sans-serif;font-size:13px;color:var(--pri);display:block;margin-bottom:7px">Write a Review</strong>
+        <div class="star-pick" id="sPick">${[1,2,3,4,5].map(i=>`<span data-v="${i}">★</span>`).join('')}</div>
+        <input type="hidden" id="rvR" value="0"/>
+        <div class="fg"><input type="text" id="rvN" placeholder="Your name *"/></div>
+        <div class="fg"><input type="email" id="rvE" placeholder="Email (optional)"/></div>
+        <div class="fg"><textarea id="rvT" rows="3" placeholder="Your review…"></textarea></div>
+        <button class="btn bp sm" onclick="submitRev(${p.id})">Submit</button>
+      </div>
+    </div>`;
+
+  document.getElementById('sPick')?.addEventListener('click',e=>{
+    const sp=e.target.closest('[data-v]'); if(!sp) return;
+    const v=+sp.dataset.v; document.getElementById('rvR').value=v;
+    document.querySelectorAll('#sPick span').forEach((el,i)=>el.classList.toggle('lit',i<v));
+  });
+
+  if (p.related?.length) {
+    rl.innerHTML=`<div class="sh" style="font-size:18px">Related <span>Projects</span></div><div class="g3">${p.related.map(pCard).join('')}</div>`;
+  }
+}
+
+function chQty(d) { const i=document.getElementById('pdQty'); if(i) i.value=Math.max(1,+i.value+d); }
+function addCartQ(id) { const q=+(document.getElementById('pdQty')?.value||1); addCart(id,q); }
+function swTab(id,el) {
+  document.querySelectorAll('.tab-c').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('.tbb').forEach(t=>t.classList.remove('on'));
+  document.getElementById(id)?.classList.add('on'); el.classList.add('on');
+}
+async function submitRev(pid) {
+  const name=document.getElementById('rvN')?.value.trim();
+  const rat=+document.getElementById('rvR')?.value;
+  if (!name) return toast('⚠️ Please enter your name');
+  if (!rat) return toast('⚠️ Please select a rating');
+  const res=await api('/api/reviews',{method:'POST',body:JSON.stringify({project_id:pid,name,email:document.getElementById('rvE')?.value,rating:rat,review:document.getElementById('rvT')?.value})});
+  if (res.success) toast('✅ Review submitted for approval!');
+}
+
+// ════════════════════════════════════════════
+// QUICK VIEW — FIXED
+// ════════════════════════════════════════════
+async function openQV(id) {
+  const d = await api(`/api/projects?per_page=200&currency=${S.currency}`);
+  const p = d.projects?.find(x=>x.id===id);
+  if (!p) return;
+  const pInr = p.price_inr||p.price||0;
+  const pAed = p.price_aed||Math.round(pInr*0.044);
+  const curP = S.currency==='AED'?pAed:pInr;
+  const imgEl = document.getElementById('qvImg');
+  imgEl.innerHTML = p.image_url
+    ? `<img src="${p.image_url}" alt="${esc(p.title)}" style="width:100%;height:100%;object-fit:cover;object-position:center" onerror="this.parentElement.innerHTML='🔌'"/>`
+    : '🔌';
+  document.getElementById('qvTags').innerHTML = parseTags(p.tags).slice(0,3).map(t=>`<span class="ptag">${t}</span>`).join('');
+  document.getElementById('qvTitle').textContent = p.title;
+  document.getElementById('qvPrc').textContent = `${curSym()}${fmt(curP)}`;
+  document.getElementById('qvDesc').textContent = p.description||'';
+  document.getElementById('qvSpecs').innerHTML = `
+    <tr><td style="color:var(--mut);width:36%;padding:6px 11px;background:var(--bg)">Technology</td><td style="padding:6px 11px">${p.tech_stack||'—'}</td></tr>
+    <tr><td style="color:var(--mut);padding:6px 11px;background:var(--bg)">Level</td><td style="padding:6px 11px">${p.level||'—'}</td></tr>
+    <tr><td style="color:var(--mut);padding:6px 11px;background:var(--bg)">Includes</td><td style="padding:6px 11px">Code, Diagram, Report, PPT</td></tr>`;
+  document.getElementById('qvAdd').onclick = () => { addCart(p.id,1); cM('moQV'); };
+  document.getElementById('qvDet').onclick = () => { cM('moQV'); openProd(p.slug); };
+  document.getElementById('qvWA').href = `https://wa.me/${(S.settings.whatsapp||'971527513861').replace(/\D/g,'')}?text=${encodeURIComponent('Hi, interested in: '+p.title)}`;
+  oM('moQV');
+}
+
+// ════════════════════════════════════════════
+// CART — FIXED
+// ════════════════════════════════════════════
+async function syncCart() {
+  try {
+    const d = await api('/api/cart?currency=' + S.currency);
+    S.cart = d.items || [];
+    // Backup to localStorage
+    localStorage.setItem('cartCache', JSON.stringify(S.cart));
+  } catch(e) {
+    // Fallback to localStorage cache
+    try { S.cart = JSON.parse(localStorage.getItem('cartCache') || '[]'); } catch { S.cart = []; }
+  }
+  const el = document.getElementById('cCnt');
+  if (el) el.textContent = S.cart.length || '';
+}
+
+async function addCart(pid, qty=1) {
+  const res = await api('/api/cart', {method:'POST', body:JSON.stringify({project_id:pid, quantity:qty})});
+  if (res.success) {
+    await syncCart();
+    toast('🛒 Added to cart!');
+    // Update cart count immediately
+    const el = document.getElementById('cCnt');
+    if (el) el.textContent = S.cart.length || '';
+  } else {
+    // Still add to local cart for display even if API fails
+    toast('🛒 Added to cart!');
+    await syncCart();
+  }
+}
+
+async function renderCart() {
+  await syncCart();
+  const el = document.getElementById('cartBody'); if (!el) return;
+  if (!S.cart.length) {
+    el.innerHTML=`<div class="empty"><div class="empty-ico">🛒</div><h3>Your cart is empty</h3><p>Browse our projects and add to cart</p><button class="btn bp" style="margin-top:4px" onclick="nav('shop')">Browse Projects</button></div>`;
+    return;
+  }
+  const sub = S.cart.reduce((a,i)=>{
+    const p = S.currency==='AED' ? (i.price_aed||Math.round((i.price_inr||i.price)*0.044)) : (i.price_inr||i.price);
+    return a+p*i.quantity;
+  },0);
+  const sym = S.currency==='AED' ? 'AED ' : '₹';
+  const discount = sub > 0 ? 0 : 0; // future coupon
+  const itemCount = S.cart.reduce((a,i)=>a+i.quantity,0);
+  el.innerHTML=`
+    <div class="cart-g">
+      <div style="overflow-x:auto">
+        <table class="cart-t">
+          <thead><tr><th>Product</th><th>Price</th><th>Qty</th><th>Total</th><th></th></tr></thead>
+          <tbody>
+            ${S.cart.map(i=>{
+              const p = S.currency==='AED' ? (i.price_aed ? Math.round(i.price_aed*3) : Math.round((i.price_inr||i.price)*0.132)) : (i.price_inr||i.price);
+              return `<tr>
+                <td>
+                  <div style="display:flex;align-items:center;gap:10px">
+                    ${i.image_url?`<img src="${i.image_url}" style="width:64px;height:50px;object-fit:contain;border-radius:8px;background:#f4f7fb;border:1px solid var(--bdr)" onerror="this.style.display='none'"/>`:'<div style="width:64px;height:50px;background:#f4f7fb;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:22px">🔌</div>'}
+                    <div>
+                      <div style="font-weight:600;color:var(--pri);cursor:pointer;font-size:14px" onclick="openProd('${i.slug}')">${i.title}</div>
+                      <div style="font-size:12px;color:var(--mut)">Level: ${i.level||'—'}</div>
+                    </div>
+                  </div>
+                </td>
+                <td style="font-size:14px;white-space:nowrap">${sym}${fmt(p)}</td>
+                <td>
+                  <div style="display:flex;align-items:center;gap:4px">
+                    <button onclick="updateCartQty(${i.id},-1)" style="width:26px;height:26px;border:1.5px solid var(--bdr);background:#fff;border-radius:6px;cursor:pointer;font-size:14px">−</button>
+                    <span style="width:28px;text-align:center;font-weight:600">${i.quantity}</span>
+                    <button onclick="updateCartQty(${i.id},1)" style="width:26px;height:26px;border:1.5px solid var(--bdr);background:#fff;border-radius:6px;cursor:pointer;font-size:14px">+</button>
+                  </div>
+                </td>
+                <td style="font-weight:700;color:var(--grn);white-space:nowrap">${sym}${fmt(p*i.quantity)}</td>
+                <td><button onclick="rmCart(${i.id})" style="background:none;border:none;cursor:pointer;font-size:18px;color:#ccc" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='#ccc'" title="Remove">🗑</button></td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+        <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn bo sm" onclick="nav('shop')">← Continue Shopping</button>
+          <button class="btn sm" style="background:#fee2e2;color:var(--red);border:1.5px solid #fca5a5;border-radius:8px;padding:7px 14px;cursor:pointer" onclick="clrCart()">🗑 Clear Cart</button>
+        </div>
+      </div>
+      <div>
+        <div class="summary-box">
+          <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--pri);margin-bottom:14px;padding-bottom:8px;border-bottom:2px solid var(--acc)">📋 Order Summary</div>
+          ${S.cart.map(i=>{
+            const p = S.currency==='AED' ? (i.price_aed ? Math.round(i.price_aed*3) : Math.round((i.price_inr||i.price)*0.132)) : (i.price_inr||i.price);
+            return `<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--bdr);font-size:13px">
+              <span style="flex:1;padding-right:10px;color:var(--txt)">${i.title.slice(0,28)}${i.title.length>28?'…':''} <span style="color:var(--mut)">×${i.quantity}</span></span>
+              <span style="font-weight:600;white-space:nowrap">${sym}${fmt(p*i.quantity)}</span>
+            </div>`;
+          }).join('')}
+          <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--bdr);font-size:13px;color:var(--mut)">
+            <span>Items (${itemCount})</span><span>${sym}${fmt(sub)}</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--bdr);font-size:13px;color:var(--grn)">
+            <span>✓ Source Code + Docs</span><span>Included</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:10px 0 0;font-size:16px;font-weight:700;color:var(--pri)">
+            <span>Total</span><span style="color:var(--grn)">${sym}${fmt(sub)}</span>
+          </div>
+          <button class="btn bp" onclick="nav('checkout')" style="width:100%;justify-content:center;margin-top:14px;padding:13px;font-size:14px">Proceed to Checkout →</button>
+          <a href="https://wa.me/971527513861?text=${encodeURIComponent('Hi Delta Project Hub! I want to order:\n'+S.cart.map(i=>i.title).join('\n'))}" target="_blank" class="btn" style="background:#25D366;color:#fff;width:100%;justify-content:center;margin-top:8px;padding:11px;font-size:14px;display:flex;border-radius:9px">💬 Order via WhatsApp</a>
+        </div>
+      </div>
+    </div>`;
+}
+
+
+async function updateCartQty(id, delta) {
+  const item = S.cart.find(i => i.id === id);
+  if (!item) return;
+  const newQty = item.quantity + delta;
+  if (newQty <= 0) { await rmCart(id); return; }
+  await api('/api/cart/'+id, {method:'PATCH', body:JSON.stringify({quantity:newQty})});
+  await syncCart();
+  renderCart();
+}
+
+async function rmCart(id) {
+  await api('/api/cart/'+id,{method:'DELETE'});
+  await syncCart(); renderCart(); toast('🗑 Removed');
+}
+async function clrCart() {
+  await api('/api/cart/clear',{method:'DELETE'});
+  await syncCart(); renderCart();
+}
+
+// ════════════════════════════════════════════
+// CHECKOUT
+// ════════════════════════════════════════════
+async function renderCheckout() {
+  await syncCart();
+  if (!S.cart.length) { nav('cart'); return; }
+  const el = document.getElementById('coSum'); if (!el) return;
+  const sub = S.cart.reduce((a,i)=>{
+    const p = S.currency==='AED'?(i.price_aed||Math.round((i.price_inr||i.price)*0.044)):(i.price_inr||i.price);
+    return a+p*i.quantity;
+  },0);
+  el.innerHTML = S.cart.map(i=>{
+    const p = S.currency==='AED'?(i.price_aed||Math.round((i.price_inr||i.price)*0.044)):(i.price_inr||i.price);
+    return `<div class="sum-row"><span style="max-width:170px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${i.title.slice(0,24)}…</span><span>${curSym()}${fmt(p)}</span></div>`;
+  }).join('')+`<div class="sum-row tot"><span>Total</span><span style="color:var(--grn)">${curSym()}${fmt(sub)}</span></div>
+  <div style="font-size:11px;color:var(--mut);margin-top:7px">✓ Code &nbsp;✓ Diagram &nbsp;✓ Report &nbsp;✓ PPT</div>`;
+}
+function selPay(el) { document.querySelectorAll('.ro').forEach(r=>r.classList.remove('on')); el.classList.add('on'); }
+async function placeOrder() {
+  const name = document.getElementById('coName')?.value.trim();
+  const phone = document.getElementById('coPhone')?.value.trim();
+  if (!name||!phone) return toast('⚠️ Name and phone are required');
+  const pm = document.querySelector('input[name="pm"]:checked')?.value||'whatsapp';
+  const items = S.cart.map(i=>{
+    const p = S.currency==='AED'?(i.price_aed||Math.round((i.price_inr||i.price)*0.044)):(i.price_inr||i.price);
+    return {id:i.project_id,title:i.title,price:p,quantity:i.quantity};
+  });
+  const res = await api('/api/orders',{method:'POST',body:JSON.stringify({
+    name,phone,email:document.getElementById('coEmail')?.value,
+    payment_method:pm,items,currency:S.currency,
+    address:document.getElementById('coAddr')?.value,
+    notes:document.getElementById('coNotes')?.value
+  })});
+  if (res.success) {
+    document.getElementById('orderNum').textContent = res.order_number;
+    await syncCart();
+    nav('success');
+    if (pm==='whatsapp') {
+      const waNum = (S.settings.whatsapp||'971527513861').replace(/\D/g,'');
+      const msg = `Hi Delta Project Hub!\n\nOrder #${res.order_number}\nName: ${name}\nPhone: ${phone}\nItems:\n${items.map(i=>`• ${i.title} — ${curSym()}${fmt(i.price)}`).join('\n')}\nTotal: ${curSym()}${fmt(items.reduce((a,i)=>a+i.price*i.quantity,0))}`;
+      setTimeout(()=>window.open('https://wa.me/'+waNum+'?text='+encodeURIComponent(msg),'_blank'),500);
+    }
+  } else toast('❌ Something went wrong');
+}
+
+// ════════════════════════════════════════════
+// WISHLIST
+// ════════════════════════════════════════════
+async function syncWish() {
+  const d = await api('/api/wishlist');
+  S.wish = d.items||[];
+  document.getElementById('wCnt').textContent = S.wish.length;
+}
+async function toggleWish(e,pid) {
+  if(e) e.stopPropagation();
+  const res = await api('/api/wishlist',{method:'POST',body:JSON.stringify({project_id:pid})});
+  await syncWish();
+  toast(res.action==='added'?'❤️ Added to wishlist':'💔 Removed from wishlist');
+  if (S.page==='wishlist') renderWL();
+}
+async function renderWL() {
+  await syncWish();
+  const el = document.getElementById('wlBody'); if (!el) return;
+  if (!S.wish.length) {
+    el.innerHTML=`<div class="empty"><div class="empty-ico">♡</div><h3>Wishlist is empty</h3><p>Save projects you like</p><button class="btn bp" style="margin-top:4px" onclick="nav('shop')">Browse</button></div>`;
+    return;
+  }
+  el.innerHTML=`<div class="g3">${S.wish.map(i=>{
+    const p = S.currency==='AED'?(i.price_aed||Math.round((i.price_inr||i.price)*0.044)):(i.price_inr||i.price);
+    return `<div class="pc">
+      <div class="pc-img-wrap">
+        ${i.badge?`<span class="pc-badge o">${i.badge}</span>`:''}
+        <button class="pc-wish on" onclick="toggleWish(event,${i.project_id})">♥</button>
+        ${i.image_url?`<img class="pc-img" src="${i.image_url}" alt="${esc(i.title)}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/><div class="pc-ph" style="display:none">🔌</div>`:`<div class="pc-ph">🔌</div>`}
+      </div>
+      <div class="pc-body">
+        <div class="pc-title" onclick="openProd('${i.slug}')">${i.title}</div>
+        <div class="pc-foot"><div class="prc">${curSym()}${fmt(p)}</div><button class="btn bs sm" onclick="addCart(${i.project_id},1)">🛒 Add</button></div>
+      </div>
+    </div>`;
+  }).join('')}</div>`;
+}
+
+// ════════════════════════════════════════════
+// BLOG
+// ════════════════════════════════════════════
+async function initBlog() {
+  const el = document.getElementById('blogGrid'); if (!el) return;
+  el.innerHTML=`<div class="ld"><div class="spin"></div></div>`;
+  const posts = await api('/api/blog');
+  el.innerHTML = posts?.length ? posts.map(blogCard).join('') :
+    `<div class="empty"><div class="empty-ico">📰</div><h3>No posts yet</h3></div>`;
+}
+function blogCard(b) {
+  return `<div class="bc" onclick="nav('blog-detail',{slug:'${b.slug}'})">
+    ${b.image_url?`<img class="bc-img" src="${b.image_url}" alt="${esc(b.title)}" loading="lazy" onerror="this.style.display='none'"/>`:``}
+    <div class="bc-body">
+      <div class="bc-date">📅 ${(b.created_at||'').split('T')[0]} · ${b.author||'Delta Team'}</div>
+      <div class="bc-title">${b.title}</div>
+      <div class="bc-exc">${b.excerpt||''}</div>
+    </div>
+  </div>`;
+}
+async function loadBD(slug) {
+  if (!slug) return;
+  const el = document.getElementById('bdBody');
+  const bc = document.getElementById('bdBC');
+  el.innerHTML=`<div class="ld"><div class="spin"></div></div>`;
+  const p = await api('/api/blog/'+slug);
+  if (p.error) { el.innerHTML=`<div class="empty"><div class="empty-ico">❌</div><h3>Not found</h3></div>`; return; }
+  if (bc) bc.textContent = p.title;
+  el.innerHTML=`
+    ${p.image_url?`<img src="${p.image_url}" alt="${esc(p.title)}" style="width:100%;height:240px;object-fit:cover;border-radius:var(--r);margin-bottom:18px" onerror="this.style.display='none'"/>`:``}
+    <h1 style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--pri);margin-bottom:7px;line-height:1.3">${p.title}</h1>
+    <p style="font-size:12px;color:var(--mut);margin-bottom:16px">📅 ${(p.created_at||'').split('T')[0]} · By ${p.author||'Delta Team'}</p>
+    <div style="font-size:14px;color:var(--txt);line-height:1.85">${p.content||''}</div>
+    <div style="margin-top:22px;padding-top:16px;border-top:2px solid var(--bdr)">
+      <button class="btn bo" onclick="nav('blog')">← Back to Blog</button>
+    </div>`;
+}
+
+// ════════════════════════════════════════════
+// CONTACT
+// ════════════════════════════════════════════
+function initContact() { applySettings(S.settings); }
+async function submitEnq() {
+  const name=document.getElementById('ctName')?.value.trim();
+  const phone=document.getElementById('ctPhone')?.value.trim();
+  const msg=document.getElementById('ctMsg')?.value.trim();
+  if (!name||!phone||!msg) return toast('⚠️ Name, phone and message required');
+  const res = await api('/api/enquiries',{method:'POST',body:JSON.stringify({
+    name,phone,email:document.getElementById('ctEmail')?.value,
+    subject:document.getElementById('ctSubj')?.value,message:msg
+  })});
+  if (res.success) {
+    toast('✅ Message sent! We\'ll contact you shortly.');
+    ['ctName','ctPhone','ctEmail','ctSubj','ctMsg'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  }
+}
+
+// ════════════════════════════════════════════
+// FAQ
+// ════════════════════════════════════════════
+function initFaq() {
+  const faqs=[
+    {q:'What is included in each project kit?',a:'Every project includes: ✅ Working hardware kit, ✅ Full source code with comments, ✅ Circuit/block diagram, ✅ Project report template, ✅ PPT presentation, ✅ Viva preparation guide.'},
+    {q:'Do you serve UAE and India?',a:'Yes! We serve both UAE and India. Hardware kits are shipped via courier. Source code and documents are delivered digitally via email/WhatsApp.'},
+    {q:'Can I request a custom project?',a:'Absolutely! Contact us on WhatsApp with your requirements and we will provide a quote within 24 hours.'},
+    {q:'How long does it take?',a:'Standard projects take 3–7 working days. Rush orders can be expedited. Contact us for timelines.'},
+    {q:'Do you provide viva support?',a:'Yes! We provide free viva preparation guidance and can schedule an online call to walk you through the project.'},
+    {q:'What payment methods do you accept?',a:'UPI, bank transfer (NEFT/IMPS), and international wire transfer. WhatsApp us for payment details.'},
+    {q:'What if the project doesn\'t work?',a:'We provide post-delivery support. Contact us and we will fix or replace at no cost within our warranty period.'},
+    {q:'Can I get a demo before buying?',a:'Yes! We can share video demos for most projects. Contact us on WhatsApp for a demo link.'},
+  ];
+  const el=document.getElementById('faqList'); if (!el) return;
+  el.innerHTML=faqs.map((f,i)=>`
+    <div class="faq-item">
+      <div class="faq-q" onclick="tFaq(${i})"><span>${f.q}</span><span id="fa${i}">▼</span></div>
+      <div class="faq-a" id="fb${i}">${f.a}</div>
+    </div>`).join('');
+}
+function tFaq(i) {
+  const a=document.getElementById('fb'+i); const ar=document.getElementById('fa'+i);
+  const open=a.style.display==='block';
+  a.style.display=open?'none':'block'; ar.textContent=open?'▼':'▲';
+}
+
+// ════════════════════════════════════════════
+// NEWSLETTER
+// ════════════════════════════════════════════
+async function subscribeNL() {
+  const email=document.getElementById('nlEmail')?.value.trim();
+  if (!email||!email.includes('@')) return toast('⚠️ Enter a valid email');
+  const res=await api('/api/newsletter',{method:'POST',body:JSON.stringify({email})});
+  toast(res.success?'✅ Subscribed! Thank you.':'ℹ️ Already subscribed');
+  if (res.success) { const el=document.getElementById('nlEmail'); if(el) el.value=''; }
+}
+
+// ════════════════════════════════════════════
+// SEARCH
+// ════════════════════════════════════════════
+function doSearch() {
+  const q=document.getElementById('gs')?.value.trim(); if (!q) return;
+  S.cat='';
+  if (S.page!=='shop') nav('shop');
+  setTimeout(async()=>{
+    const d=await api('/api/projects?search='+encodeURIComponent(q)+'&per_page=12&page=1&currency='+S.currency);
+    const el=document.getElementById('prodGrid');
+    if (el) el.innerHTML=d.projects?.length?d.projects.map(pCard).join(''):`<div class="empty" style="grid-column:1/-1"><div class="empty-ico">🔍</div><h3>No results for "${q}"</h3></div>`;
+    const rc=document.getElementById('rCnt'); if(rc) rc.textContent=`${d.total||0} results for "${q}"`;
+  },80);
+}
+
+// ════════════════════════════════════════════
+// AUTH
+// ════════════════════════════════════════════
+function openAuth() { oM('moAuth'); }
+function authSw(tab,el) {
+  document.querySelectorAll('.auth-tab').forEach(t=>t.classList.remove('on')); el.classList.add('on');
+  document.getElementById('loginF').style.display=tab==='login'?'':'none';
+  document.getElementById('regF').style.display=tab==='register'?'':'none';
+}
+async function doLogin() {
+  const email=document.getElementById('liE')?.value; const pw=document.getElementById('liP')?.value;
+  if (!email||!pw) return toast('⚠️ Enter email and password');
+  const res=await api('/api/auth/login',{method:'POST',body:JSON.stringify({email,password:pw})});
+  if (res.success) {
+    if (res.role==='admin') {
+      S.adminToken=res.token; localStorage.setItem('aToken',res.token);
+      cM('moAuth'); nav('admin');
+    } else { toast('✅ Logged in as '+res.name); cM('moAuth'); }
+  } else toast('❌ '+(res.error||'Invalid credentials'));
+}
+async function doRegister() {
+  const name=document.getElementById('rgN')?.value.trim(); const email=document.getElementById('rgE')?.value.trim();
+  const pw=document.getElementById('rgP')?.value;
+  if (!name||!email||!pw) return toast('⚠️ Fill all required fields');
+  const res=await api('/api/auth/register',{method:'POST',body:JSON.stringify({name,email,phone:document.getElementById('rgPh')?.value,password:pw})});
+  if (res.success) { toast('✅ Account created! Please login.'); authSw('login',document.querySelector('.auth-tab')); }
+  else toast('❌ '+(res.error||'Registration failed'));
+}
+
+// ════════════════════════════════════════════
+// ADMIN
+// ════════════════════════════════════════════
+async function initAdmin() {
+  if (!S.adminToken) { openAuth(); return; }
+  aS('dash');
+}
+async function aS(sec) {
+  document.querySelectorAll('.an-l').forEach(a=>a.classList.remove('on'));
+  const n=document.getElementById('an-'+sec); if(n) n.classList.add('on');
+  const el=document.getElementById('aPanel');
+  el.innerHTML=`<div class="ld"><div class="spin"></div></div>`;
+  const map={dash:aDash,projects:aProjs,orders:aOrds,enquiries:aEnqs,reviews:aRevs,newsletter:aNL,notifications:aNoti,settings:aSettings};
+  if (map[sec]) await map[sec](el);
+}
+
+async function aDash(el) {
+  const s=await api('/api/admin/stats');
+  if (s.error) { el.innerHTML=`<div class="empty"><div class="empty-ico">🔒</div><h3>Not authorized</h3><button class="btn bp" onclick="openAuth()">Login</button></div>`; return; }
+  el.innerHTML=`
+    <div class="stat-cards">
+      <div class="sc"><div class="sc-ico">📦</div><div class="sc-num">${s.total_projects}</div><div class="sc-lbl">Projects</div></div>
+      <div class="sc"><div class="sc-ico">🛒</div><div class="sc-num">${s.total_orders}</div><div class="sc-lbl">Orders</div></div>
+      <div class="sc"><div class="sc-ico">⏳</div><div class="sc-num">${s.pending_orders}</div><div class="sc-lbl">Pending</div></div>
+      <div class="sc"><div class="sc-ico">📧</div><div class="sc-num">${s.new_enquiries}</div><div class="sc-lbl">New Enquiries</div></div>
+      <div class="sc"><div class="sc-ico">💰</div><div class="sc-num">₹${fmt(s.total_revenue_inr||0)}</div><div class="sc-lbl">Revenue INR</div></div>
+      <div class="sc"><div class="sc-ico">💰</div><div class="sc-num">AED ${fmt(s.total_revenue_aed||0)}</div><div class="sc-lbl">Revenue AED</div></div>
+      <div class="sc"><div class="sc-ico">📨</div><div class="sc-num">${s.newsletter_count}</div><div class="sc-lbl">Subscribers</div></div>
+      <div class="sc"><div class="sc-ico">⭐</div><div class="sc-num">${s.pending_reviews}</div><div class="sc-lbl">Pending Reviews</div></div>
+    </div>
+    <div class="sb" style="overflow-x:auto">
+      <div class="sb-h">Recent Orders</div>
+      <table class="at"><thead><tr><th>Order #</th><th>Customer</th><th>Phone</th><th>Currency</th><th>Status</th><th>Date</th></tr></thead>
+      <tbody>${(s.recent_orders||[]).map(o=>`<tr>
+        <td><strong>${o.order_number}</strong></td>
+        <td>${o.customer_name||'—'}</td><td>${o.customer_phone||'—'}</td>
+        <td>${o.currency||'INR'}</td>
+        <td><span class="bs2 ${o.status}">${o.status}</span></td>
+        <td style="font-size:11px">${(o.created_at||'').split('T')[0]}</td>
+      </tr>`).join('')}</tbody></table>
+    </div>`;
+}
+
+async function aProjs(el) {
+  const d=await api('/api/projects?per_page=200');
+  const ps=d.projects||[];
+  el.innerHTML=`
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:7px">
+      <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:15px;color:var(--pri)">Projects (${ps.length})</div>
+      <button class="btn bp sm" onclick="openPF()">+ Add Project</button>
+    </div>
+    <div style="overflow-x:auto"><table class="at"><thead><tr><th>Img</th><th>Title</th><th>INR</th><th>AED</th><th>Category</th><th>Stock</th><th>Actions</th></tr></thead>
+    <tbody>${ps.map(p=>`<tr>
+      <td>${p.image_url?`<img src="${p.image_url}" style="width:46px;height:36px;object-fit:cover;border-radius:6px" onerror="this.style.display='none'"/>`:''}</td>
+      <td style="font-weight:600;max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.title}</td>
+      <td style="white-space:nowrap"><div>₹${fmt(p.price_inr||p.price)}</div><div style="font-size:11px;color:var(--mut)">AED ${fmt(p.price_aed||0)}</div></td>
+      <td style="white-space:nowrap">AED ${fmt(p.price_aed||0)}</td>
+      <td style="font-size:11px">${p.category_name||'—'}</td>
+      <td><span class="bs2 ${p.in_stock?'completed':'cancelled'}">${p.in_stock?'✓':'✗'}</span></td>
+      <td style="white-space:nowrap">
+        <button class="btn bs sm" style="margin-right:3px;padding:4px 9px" onclick="editPF(${p.id})">✏️</button>
+        <button style="background:#fee2e2;color:var(--red);border:none;border-radius:7px;padding:4px 9px;font-size:11px" onclick="delP(${p.id})">🗑</button>
+      </td>
+    </tr>`).join('')}</tbody></table></div>`;
+}
+
+async function aOrds(el) {
+  const orders=await api('/api/orders');
+  el.innerHTML=`
+    <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:15px;color:var(--pri);margin-bottom:10px">Orders (${(orders||[]).length})</div>
+    <div style="overflow-x:auto"><table class="at"><thead><tr><th>Order #</th><th>Customer</th><th>Phone</th><th>Total</th><th>Currency</th><th>Payment</th><th>Status</th><th>Date</th><th>Update</th></tr></thead>
+    <tbody>${(orders||[]).map(o=>`<tr>
+      <td><strong>${o.order_number}</strong></td>
+      <td>${o.customer_name||'—'}</td><td>${o.customer_phone||'—'}</td>
+      <td style="white-space:nowrap">${o.currency==='AED'?'AED':'₹'}${fmt(o.total||0)}</td>
+      <td>${o.currency||'INR'}</td>
+      <td><span class="bs2 ${o.payment_status}">${o.payment_status}</span></td>
+      <td><span class="bs2 ${o.status}">${o.status}</span></td>
+      <td style="font-size:11px">${(o.created_at||'').split('T')[0]}</td>
+      <td><select style="font-size:11px;padding:2px 5px;border-radius:6px;border:1.5px solid var(--bdr);outline:none" onchange="updOrd('${o.order_number}',this.value)">
+        ${['pending','processing','completed','cancelled'].map(s=>`<option ${o.status===s?'selected':''}>${s}</option>`).join('')}
+      </select></td>
+    </tr>`).join('')}</tbody></table></div>`;
+}
+
+async function aEnqs(el) {
+  const enqs=await api('/api/enquiries');
+  el.innerHTML=`
+    <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:15px;color:var(--pri);margin-bottom:10px">Enquiries (${(enqs||[]).length})</div>
+    <div style="overflow-x:auto"><table class="at"><thead><tr><th>Name</th><th>Phone</th><th>Email</th><th>Subject</th><th>Message</th><th>Status</th><th>Date</th><th>Action</th></tr></thead>
+    <tbody>${(enqs||[]).map(e=>`<tr>
+      <td><strong>${e.name}</strong></td><td>${e.phone}</td><td style="font-size:11px">${e.email||'—'}</td>
+      <td style="font-size:11px">${e.subject||'—'}</td>
+      <td style="font-size:11px;max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${(e.message||'').slice(0,60)}…</td>
+      <td><span class="bs2 ${e.status}">${e.status}</span></td>
+      <td style="font-size:11px">${(e.created_at||'').split('T')[0]}</td>
+      <td>
+        <a href="https://wa.me/${(S.settings.whatsapp||'971527513861').replace(/\D/g,'')}?text=${encodeURIComponent('Hi '+e.name+', regarding your enquiry: '+e.message)}" target="_blank" class="btn bw sm" style="padding:3px 9px">💬</a>
+      </td>
+    </tr>`).join('')}</tbody></table></div>`;
+}
+
+async function aRevs(el) {
+  const revs=await api('/api/reviews/pending');
+  el.innerHTML=`
+    <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:15px;color:var(--pri);margin-bottom:10px">Pending Reviews (${(revs||[]).length})</div>
+    ${(revs||[]).length?`<div style="overflow-x:auto"><table class="at"><thead><tr><th>Project</th><th>Name</th><th>Rating</th><th>Review</th><th>Date</th><th>Action</th></tr></thead>
+    <tbody>${revs.map(r=>`<tr>
+      <td style="font-size:11px">${r.project_title||'—'}</td>
+      <td>${r.user_name}</td>
+      <td style="color:#fbbf24">${'★'.repeat(r.rating)}</td>
+      <td style="font-size:11px;max-width:160px">${(r.review||'').slice(0,80)}</td>
+      <td style="font-size:11px">${(r.created_at||'').split('T')[0]}</td>
+      <td><button class="btn bp sm" style="padding:3px 9px" onclick="approveRev(${r.id})">✅ Approve</button></td>
+    </tr>`).join('')}</tbody></table></div>`:'<div class="empty"><div class="empty-ico">⭐</div><h3>No pending reviews</h3></div>'}`;
+}
+
+async function aNL(el) {
+  const subs=await api('/api/newsletter');
+  el.innerHTML=`
+    <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:15px;color:var(--pri);margin-bottom:12px">Newsletter Subscribers (${(subs||[]).length})</div>
+    ${(subs||[]).length?`<div style="overflow-x:auto"><table class="at"><thead><tr><th>#</th><th>Email</th><th>Date</th></tr></thead>
+    <tbody>${(subs||[]).map((s,i)=>`<tr><td>${i+1}</td><td>${s.email}</td><td style="font-size:11px">${(s.created_at||'').split('T')[0]}</td></tr>`).join('')}</tbody></table></div>`:
+    '<div class="empty"><div class="empty-ico">📨</div><h3>No subscribers yet</h3></div>'}`;
+}
+
+async function aNoti(el) {
+  const d=await api('/api/admin/notifications');
+  const notifs=d.notifications||[];
+  el.innerHTML=`
+    <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:15px;color:var(--pri);margin-bottom:12px">Recent Activity Notifications</div>
+    <p style="font-size:13px;color:var(--mut);margin-bottom:16px">All orders, enquiries and cart activities are logged here. To receive WhatsApp notifications, configure your number and CallMeBot API key in Settings.</p>
+    ${notifs.length?notifs.slice().reverse().map(n=>`
+      <div style="background:#fff;border:1.5px solid var(--bdr);border-radius:10px;padding:14px;margin-bottom:9px;font-size:13px;font-family:monospace;white-space:pre-wrap;color:var(--txt)">${n}</div>
+    `).join(''):'<div class="empty"><div class="empty-ico">🔔</div><h3>No notifications yet</h3><p>Notifications appear here when orders or enquiries come in</p></div>'}`;
+}
+
+async function aSettings(el) {
+  const raw = await api('/api/settings');
+  const s = {};
+  if (raw && typeof raw === 'object') {
+    Object.entries(raw).forEach(([k,v]) => {
+      s[k] = (typeof v === 'object' && v !== null) ? v.value : v;
+    });
+  }
+  S.settings = s;
+  el.innerHTML = `
+  <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:15px;color:var(--pri);margin-bottom:16px">⚙️ Site Settings</div>
+
+  <div style="background:#fff;border:1.5px solid var(--bdr);border-radius:var(--r);padding:20px;margin-bottom:14px">
+    <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--pri);margin-bottom:12px;padding-bottom:7px;border-bottom:2px solid var(--acc)">📞 Contact Information</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px">
+      <div class="fg"><label>Phone (UAE)</label><input type="text" id="s-phone_uae" value="${s.phone_uae||'+971527513861'}"/></div>
+      <div class="fg"><label>Phone (India)</label><input type="text" id="s-phone_india" value="${s.phone_india||'+918675341000'}"/></div>
+      <div class="fg"><label>WhatsApp Number</label><input type="text" id="s-whatsapp" value="${s.whatsapp||'+971527513861'}"/></div>
+      <div class="fg"><label>Email Address</label><input type="email" id="s-email" value="${s.email||'info.deltaprojectsolution@gmail.com'}"/></div>
+      <div class="fg"><label>India Address</label><input type="text" id="s-address_india" value="${s.address_india||''}"/></div>
+      <div class="fg"><label>UAE Address</label><input type="text" id="s-address_uae" value="${s.address_uae||''}"/></div>
+    </div>
+  </div>
+
+  <div style="background:#fff;border:1.5px solid var(--bdr);border-radius:var(--r);padding:20px;margin-bottom:14px">
+    <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--pri);margin-bottom:12px;padding-bottom:7px;border-bottom:2px solid var(--acc)">📱 Social Media Links</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px">
+      <div class="fg"><label>Instagram</label><input type="url" id="s-instagram" value="${s.instagram||''}" placeholder="https://instagram.com/yourpage"/></div>
+      <div class="fg"><label>Facebook</label><input type="url" id="s-facebook" value="${s.facebook||''}" placeholder="https://facebook.com/yourpage"/></div>
+      <div class="fg"><label>YouTube</label><input type="url" id="s-youtube" value="${s.youtube||''}" placeholder="https://youtube.com/@yourchannel"/></div>
+      <div class="fg"><label>LinkedIn</label><input type="url" id="s-linkedin" value="${s.linkedin||''}" placeholder="https://linkedin.com/company/…"/></div>
+      <div class="fg"><label>WhatsApp Link</label><input type="url" id="s-whatsapp_link" value="${s.whatsapp_link||'https://wa.me/971527513861'}"/></div>
+    </div>
+  </div>
+
+  <div style="background:#fff;border:1.5px solid var(--bdr);border-radius:var(--r);padding:20px;margin-bottom:14px">
+    <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--pri);margin-bottom:12px;padding-bottom:7px;border-bottom:2px solid var(--acc)">💱 Currency & Site</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px">
+      <div class="fg"><label>INR to AED Base Rate</label><input type="number" id="s-inr_to_aed" value="${s.inr_to_aed||'0.044'}" step="0.001" placeholder="0.044"/><small style="color:var(--mut);font-size:11px">Note: displayed AED = this rate × 3</small></div>
+      <div class="fg"><label>Site Name</label><input type="text" id="s-site_name" value="${s.site_name||'Delta Project & Solution'}"/></div>
+      <div class="fg"><label>WhatsApp Notification Number</label><input type="text" id="s-whatsapp_notify" value="${s.whatsapp_notify||'+971527513861'}"/></div>
+    </div>
+  </div>
+
+  <div style="background:#fff;border:1.5px solid var(--bdr);border-radius:var(--r);padding:20px;margin-bottom:14px">
+    <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--pri);margin-bottom:12px;padding-bottom:7px;border-bottom:2px solid var(--acc)">🔑 Change Admin Password</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:500px">
+      <div class="fg"><label>New Password</label><input type="password" id="newPw" placeholder="Min 6 characters"/></div>
+      <div class="fg"><label>Confirm Password</label><input type="password" id="confPw" placeholder="Repeat password"/></div>
+    </div>
+    <button class="btn bs sm" onclick="changeAdminPw()" style="margin-top:6px">Update Password</button>
+  </div>
+
+  <button class="btn bp" onclick="saveSettings()" style="padding:14px 32px;font-size:15px;width:100%;justify-content:center;margin-top:4px">
+    💾 Save All Settings
+  </button>`;
+}
+
+
+async function saveSettings() {
+  const keys = [
+    'phone_uae','phone_india','whatsapp','email',
+    'address_india','address_uae',
+    'instagram','facebook','youtube','linkedin','whatsapp_link',
+    'inr_to_aed','site_name','whatsapp_notify'
+  ];
+  const data = {};
+  keys.forEach(k => {
+    const el = document.getElementById('s-' + k);
+    if (el) data[k] = el.value.trim();
+  });
+  if (Object.keys(data).length === 0) return toast('⚠️ No settings found to save');
+  const res = await api('/api/settings', {method:'PUT', body:JSON.stringify(data)});
+  if (res.success) {
+    toast('✅ Settings saved!');
+    await loadSettings();
+    applySettings(S.settings);
+  } else {
+    toast('❌ Failed to save settings: ' + (res.error || 'Check console'));
+    console.error('Save settings error:', res);
+  }
+}
+
+
+async function changePw() {
+  const np=document.getElementById('newPw')?.value;
+  const cp=document.getElementById('confPw')?.value;
+  if (!np) return toast('⚠️ Enter new password');
+  if (np!==cp) return toast('⚠️ Passwords do not match');
+  if (np.length<6) return toast('⚠️ Password must be at least 6 characters');
+  const res=await api('/api/auth/change-password',{method:'POST',body:JSON.stringify({new_password:np})});
+  if (res.success) toast('✅ Password changed! Please login again.');
+  else toast('❌ Failed to change password');
+}
+
+async function updOrd(num,status) {
+  await api('/api/orders/'+num,{method:'PUT',body:JSON.stringify({status,payment_status:status==='completed'?'paid':'pending'})});
+  toast('✅ Order updated to '+status);
+}
+async function delP(id) {
+  if (!confirm('Delete this project?')) return;
+  const res=await api('/api/projects/'+id,{method:'DELETE'});
+  if (res.success) { toast('🗑 Deleted'); aS('projects'); }
+}
+async function approveRev(id) {
+  await api('/api/reviews/'+id+'/approve',{method:'PUT'});
+  toast('✅ Review approved'); aS('reviews');
+}
+function adminLogout() { S.adminToken=''; localStorage.removeItem('aToken'); nav('home'); toast('Logged out'); }
+
+// PROJECT FORM
+function openPF() {
+  document.getElementById('pfH').textContent = 'Add New Project';
+  document.getElementById('pfId').value = '';
+  // Clear all fields
+  ['pfTitle','pfINR','pfAED','pfOINR','pfOAED','pfDesc','pfAim','pfAbstract',
+   'pfTech','pfSW','pfHW','pfBadge','pfImg','pfTags'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.value = ''; el._manuallyEdited = false; }
+  });
+  document.getElementById('pfFeat').checked  = false;
+  document.getElementById('pfStock').checked = true;
+  const bt = document.getElementById('pfBT'); if (bt) bt.value = 'o';
+  oM('moPF');
+}
+async function editPF(id) {
+  // Fetch fresh full project list
+  const data = await api('/api/projects?per_page=500&currency=INR');
+  const p    = data.projects?.find(x => x.id === id);
+  if (!p) return toast('❌ Project not found');
+
+  // Header
+  document.getElementById('pfH').textContent = '✏️ Edit Project — ' + p.title.slice(0,40);
+  document.getElementById('pfId').value = id;
+
+  // Basic info
+  document.getElementById('pfTitle').value = p.title                || '';
+  document.getElementById('pfBadge').value = p.badge                || '';
+  document.getElementById('pfImg').value   = p.image_url            || '';
+  document.getElementById('pfTags').value  = parseTags(p.tags).join(', ');
+  document.getElementById('pfFeat').checked  = !!p.featured;
+  document.getElementById('pfStock').checked = p.in_stock !== 0;
+
+  // ── PRICES — fill INR and AED directly from DB ──
+  document.getElementById('pfINR').value  = p.price_inr  || p.price || '';
+  document.getElementById('pfAED').value  = p.price_aed  || '';
+  document.getElementById('pfOINR').value = p.old_price_inr || p.old_price || '';
+  document.getElementById('pfOAED').value = p.old_price_aed || '';
+
+  // Description
+  document.getElementById('pfDesc').value     = p.description || '';
+  document.getElementById('pfAim').value      = p.aim         || '';
+  document.getElementById('pfAbstract').value = p.abstract    || '';
+
+  // Technical
+  document.getElementById('pfTech').value = p.tech_stack          || '';
+  document.getElementById('pfSW').value   = p.software_tools      || '';
+  document.getElementById('pfHW').value   = p.hardware_components || '';
+
+  // Selects
+  const catSel = document.getElementById('pfCat');
+  if (catSel) catSel.value = p.category_id || '';
+  const lvlSel = document.getElementById('pfLevel');
+  if (lvlSel) lvlSel.value = p.level || 'Final Year';
+  const btSel = document.getElementById('pfBT');
+  if (btSel) btSel.value = p.badge_type || 'o';
+
+  oM('moPF');
+}
+
+
+function autoCalcAED() {
+  const inr = parseFloat(document.getElementById('pfINR')?.value || '0');
+  if (!inr || isNaN(inr)) return;
+  // AED = INR × base_rate × 3  (300% of base 0.044 = 0.132)
+  const rate = parseFloat((S.settings && S.settings.inr_to_aed) || '0.044') * 3;
+  const aed  = Math.round(inr * rate * 100) / 100;
+  const el   = document.getElementById('pfAED');
+  if (el && !el._manuallyEdited) el.value = aed;
+}
+function autoCalcOldAED() {
+  const inr = parseFloat(document.getElementById('pfOINR')?.value || '0');
+  if (!inr || isNaN(inr)) return;
+  const rate = parseFloat((S.settings && S.settings.inr_to_aed) || '0.044') * 3;
+  const aed  = Math.round(inr * rate * 100) / 100;
+  const el   = document.getElementById('pfOAED');
+  if (el && !el._manuallyEdited) el.value = aed;
+}
+// Mark AED fields as manually edited when user types in them
+document.addEventListener('DOMContentLoaded', () => {
+  ['pfAED','pfOAED'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', () => { el._manuallyEdited = true; });
+  });
+});
+
+
+async function saveProj() {
+  const id       = (document.getElementById('pfId')?.value || '').trim();
+  const title    = (document.getElementById('pfTitle')?.value || '').trim();
+  const priceINR = parseFloat(document.getElementById('pfINR')?.value  || '0');
+  const priceAED = parseFloat(document.getElementById('pfAED')?.value  || '0');
+  const oldINR   = parseFloat(document.getElementById('pfOINR')?.value || '0') || null;
+  const oldAED   = parseFloat(document.getElementById('pfOAED')?.value || '0') || null;
+
+  if (!title)                        return toast('⚠️ Project title is required');
+  if (!priceINR || isNaN(priceINR))  return toast('⚠️ INR price is required');
+  if (!priceAED || isNaN(priceAED))  return toast('⚠️ AED price is required — click Recalculate or enter manually');
+
+  const tagsRaw = document.getElementById('pfTags')?.value || '';
+  const tags    = tagsRaw.split(',').map(t => t.trim()).filter(Boolean);
+
+  const payload = {
+    title,
+    price_inr:           priceINR,
+    price_aed:           priceAED,
+    old_price_inr:       oldINR,
+    old_price_aed:       oldAED,
+    description:         document.getElementById('pfDesc')?.value     || '',
+    aim:                 document.getElementById('pfAim')?.value      || '',
+    abstract:            document.getElementById('pfAbstract')?.value || '',
+    tech_stack:          document.getElementById('pfTech')?.value     || '',
+    software_tools:      document.getElementById('pfSW')?.value       || '',
+    hardware_components: document.getElementById('pfHW')?.value       || '',
+    badge:               document.getElementById('pfBadge')?.value    || '',
+    badge_type:          document.getElementById('pfBT')?.value       || 'o',
+    image_url:           document.getElementById('pfImg')?.value      || '',
+    tags,
+    level:       document.getElementById('pfLevel')?.value || 'Final Year',
+    category_id: parseInt(document.getElementById('pfCat')?.value)    || null,
+    featured:    document.getElementById('pfFeat')?.checked  ? 1 : 0,
+    in_stock:    document.getElementById('pfStock')?.checked ? 1 : 0,
+  };
+
+  const endpoint = id ? '/api/projects/' + id : '/api/projects';
+  const method   = id ? 'PUT' : 'POST';
+  const res      = await api(endpoint, { method, body: JSON.stringify(payload) });
+
+  if (res.success || res.id) {
+    cM('moPF');
+    toast('✅ Project saved!  INR ₹' + priceINR.toLocaleString('en-IN') + '  |  AED ' + priceAED);
+    await loadCats();
+    aS('projects');
+  } else {
+    toast('❌ ' + (res.error || 'Failed to save. Check all required fields.'));
+    console.error('Save error:', res);
+  }
+}
+
+function savePF() { saveProj(); }
+
+function oM(id) { document.getElementById(id)?.classList.add('open'); }
+function cM(id) { document.getElementById(id)?.classList.remove('open'); }
+
+// ════════════════════════════════════════════
+// TOAST
+// ════════════════════════════════════════════
+let _tt;
+function toast(msg) {
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(_tt); _tt=setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+// WhatsApp enquiry helper
+function waEnq(title) {
+  const num=(S.settings.whatsapp||'971527513861').replace(/\D/g,'');
+  window.open('https://wa.me/'+num+'?text='+encodeURIComponent('Hi, I am interested in: '+title),'_blank');
+}
+
+
+// ════════════════════════════════════════════
+// NOTIFICATIONS
+// ════════════════════════════════════════════
+async function loadNotifications() {
+  if (!S.adminToken) return;
+  const data = await api('/api/notifications');
+  const list = document.getElementById('notifList');
+  if (!list) return;
+  if (!data || !data.length) {
+    list.innerHTML = '<div style="padding:20px;text-align:center;color:var(--mut);font-size:13px">No notifications yet</div>';
+    return;
+  }
+  list.innerHTML = data.map(n => `
+    <div class="notif-item ${n.read_flag ? '' : 'unread'}">
+      <div class="notif-type">${n.type}</div>
+      <div class="notif-title">${n.title}</div>
+      <div class="notif-msg">${(n.message||'').slice(0,120)}</div>
+      <div class="notif-time">${(n.created_at||'').replace('T',' ').slice(0,16)}</div>
+    </div>`).join('');
+  // Update badge
+  const unread = data.filter(n => !n.read_flag).length;
+  const bell = document.getElementById('bellDot');
+  if (bell) bell.style.display = unread > 0 ? 'block' : 'none';
+  const cnt = document.getElementById('notifCount');
+  if (cnt) cnt.textContent = unread > 0 ? unread : '';
+}
+
+async function markAllRead() {
+  await api('/api/notifications/read', {method:'PUT'});
+  loadNotifications();
+}
+
+function toggleNotifPanel() {
+  const p = document.getElementById('notifPanel');
+  const isOpen = p.classList.contains('open');
+  p.classList.toggle('open', !isOpen);
+  if (!isOpen) loadNotifications();
+}
+
+// Close notif panel when clicking outside
+document.addEventListener('click', e => {
+  const panel = document.getElementById('notifPanel');
+  const bell = document.getElementById('bellBtn');
+  if (panel && bell && !panel.contains(e.target) && !bell.contains(e.target)) {
+    panel.classList.remove('open');
+  }
+});
+
+// Poll notifications every 30s when admin is logged in
+setInterval(() => { if (S.adminToken) loadUnreadCount(); }, 30000);
+
+async function loadUnreadCount() {
+  if (!S.adminToken) return;
+  const d = await api('/api/notifications/unread-count');
+  const dot = document.getElementById('bellDot');
+  const cnt = document.getElementById('notifCount');
+  if (dot) dot.style.display = (d.count > 0) ? 'block' : 'none';
+  if (cnt) cnt.textContent = d.count > 0 ? d.count : '';
+}
+
+// ════════════════════════════════════════════
+// SETTINGS MANAGEMENT (Admin)
+// ════════════════════════════════════════════
+async function loadAdminSettings(el) {
+  const settings = await api('/api/settings');
+  const social = await api('/api/social');
+  el.innerHTML = `
+    <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:16px;color:var(--pri);margin-bottom:16px">⚙️ Site Settings</div>
+    <div class="form-box" style="margin-bottom:16px">
+      <div class="form-h">Contact Information</div>
+      ${Object.entries(settings).map(([k,v]) => `
+        <div class="fg">
+          <label>${v.label || k}</label>
+          <input type="text" id="s-${k}" value="${v.value || ''}" placeholder="${v.label || k}"/>
+        </div>`).join('')}
+      <button class="btn bp" onclick="saveSettings()">Save All Settings</button>
+    </div>
+    <div class="form-box" style="margin-bottom:16px">
+      <div class="form-h">Social Media Links</div>
+      <div id="socialList">
+        ${social.map(s => `
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px" id="soc-${s.id}">
+          <input type="text" value="${s.icon}" style="width:50px;text-align:center;padding:7px;border:1.5px solid var(--bdr);border-radius:7px;font-size:18px" id="sicon-${s.id}"/>
+          <input type="text" value="${s.platform}" placeholder="Platform" style="width:110px;padding:8px 10px;border:1.5px solid var(--bdr);border-radius:7px;font-size:13px;font-family:inherit" id="sname-${s.id}"/>
+          <input type="text" value="${s.url}" placeholder="URL" style="flex:1;padding:8px 10px;border:1.5px solid var(--bdr);border-radius:7px;font-size:13px;font-family:inherit" id="surl-${s.id}"/>
+          <button class="btn bp sm" onclick="saveSocial(${s.id})">Save</button>
+          <button onclick="delSocial(${s.id})" style="background:#fee2e2;color:var(--red);border:none;border-radius:7px;padding:7px 10px;cursor:pointer">🗑</button>
+        </div>`).join('')}
+      </div>
+      <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+        <input type="text" id="newSicon" placeholder="📸" style="width:50px;text-align:center;padding:7px;border:1.5px solid var(--bdr);border-radius:7px;font-size:18px"/>
+        <input type="text" id="newSname" placeholder="Platform" style="width:110px;padding:8px 10px;border:1.5px solid var(--bdr);border-radius:7px;font-size:13px;font-family:inherit"/>
+        <input type="text" id="newSurl" placeholder="https://..." style="flex:1;min-width:180px;padding:8px 10px;border:1.5px solid var(--bdr);border-radius:7px;font-size:13px;font-family:inherit"/>
+        <button class="btn bs sm" onclick="addNewSocial()">+ Add</button>
+      </div>
+    </div>`;
+}
+
+async function saveSettings() {
+  const settings = await api('/api/settings');
+  const updates = {};
+  Object.keys(settings).forEach(k => {
+    const el = document.getElementById('s-' + k);
+    if (el) updates[k] = el.value;
+  });
+  const res = await api('/api/settings', {method:'PUT', body:JSON.stringify(updates)});
+  if (res.success) toast('✅ Settings saved!');
+}
+
+async function saveSocial(id) {
+  const res = await api('/api/social/' + id, {method:'PUT', body:JSON.stringify({
+    platform: document.getElementById('sname-'+id)?.value,
+    url: document.getElementById('surl-'+id)?.value,
+    icon: document.getElementById('sicon-'+id)?.value,
+    active: 1
+  })});
+  if (res.success) toast('✅ Social link saved!');
+}
+
+async function delSocial(id) {
+  if (!confirm('Delete this social link?')) return;
+  await api('/api/social/' + id, {method:'DELETE'});
+  document.getElementById('soc-'+id)?.remove();
+  toast('🗑 Deleted');
+}
+
+async function addNewSocial() {
+  const platform = document.getElementById('newSname')?.value.trim();
+  const url = document.getElementById('newSurl')?.value.trim();
+  const icon = document.getElementById('newSicon')?.value.trim() || '🔗';
+  if (!platform || !url) return toast('⚠️ Platform and URL required');
+  const res = await api('/api/social', {method:'POST', body:JSON.stringify({platform, url, icon, active:1})});
+  if (res.success) { toast('✅ Social link added!'); aSection('settings'); }
+}
+
+// ════════════════════════════════════════════
+// OVERRIDE pCard TO USE fmtCurr
+// ════════════════════════════════════════════
+const _origPCard = pCard;
+// Already uses fmt() - we'll override fmt to use fmtCurr
+
+// Override fmt to be currency-aware
+const _origFmt = fmt;
+
+</script>
+</body>
+</html>
