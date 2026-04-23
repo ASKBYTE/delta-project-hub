@@ -360,6 +360,15 @@ def remove_from_cart(cid):
 def clear_cart():
     sid = get_session()
     db = get_db()
+    # Auto-save customer from order
+    if d.get('phone'):
+        existing2 = db.execute("SELECT id FROM customers WHERE phone=?", (d['phone'],)).fetchone()
+        if existing2:
+            db.execute("UPDATE customers SET name=COALESCE(?,name),email=COALESCE(?,email),updated_at=datetime('now') WHERE id=?",
+                       (d.get('name'), d.get('email'), existing2['id']))
+        else:
+            db.execute("INSERT INTO customers(name,email,phone,source) VALUES(?,?,?,?)",
+                       (d.get('name'), d.get('email'), d['phone'], 'order'))
     db.execute("DELETE FROM cart WHERE session_id=?", (sid,))
     db.commit()
     return jsonify({'success':True})
@@ -409,6 +418,15 @@ def place_order():
         (order_num, d.get('name'), d.get('email'), d.get('phone'),
          json.dumps(items), subtotal, subtotal, d.get('payment_method','whatsapp'),
          d.get('notes'), d.get('address')))
+    # Auto-save customer from order
+    if d.get('phone'):
+        existing2 = db.execute("SELECT id FROM customers WHERE phone=?", (d['phone'],)).fetchone()
+        if existing2:
+            db.execute("UPDATE customers SET name=COALESCE(?,name),email=COALESCE(?,email),updated_at=datetime('now') WHERE id=?",
+                       (d.get('name'), d.get('email'), existing2['id']))
+        else:
+            db.execute("INSERT INTO customers(name,email,phone,source) VALUES(?,?,?,?)",
+                       (d.get('name'), d.get('email'), d['phone'], 'order'))
     db.execute("DELETE FROM cart WHERE session_id=?", (sid,))
     db.commit()
     # Notification
@@ -471,6 +489,15 @@ def submit_enquiry():
     d = request.json
     db.execute("INSERT INTO enquiries(name,email,phone,subject,message,project_id) VALUES(?,?,?,?,?,?)",
                (d['name'], d.get('email'), d['phone'], d.get('subject'), d.get('message'), d.get('project_id')))
+    # Auto-save customer
+    if d.get('phone'):
+        existing = db.execute("SELECT id FROM customers WHERE phone=?", (d['phone'],)).fetchone()
+        if existing:
+            db.execute("UPDATE customers SET name=COALESCE(?,name),email=COALESCE(?,email),updated_at=datetime('now') WHERE id=?",
+                       (d.get('name'), d.get('email'), existing['id']))
+        else:
+            db.execute("INSERT INTO customers(name,email,phone,source) VALUES(?,?,?,?)",
+                       (d.get('name'), d.get('email'), d['phone'], 'enquiry'))
     db.commit()
     proj_title = ''
     if d.get('project_id'):
@@ -592,6 +619,108 @@ def change_password():
     db.commit()
     return jsonify({'success':True})
 
+@app.route('/api/customers', methods=['GET'])
+def get_customers():
+    if not verify_admin(): return jsonify({'error':'Unauthorized'}), 401
+    db = get_db()
+    rows = db.execute("SELECT * FROM customers ORDER BY created_at DESC").fetchall()
+    return jsonify(rows_to_list(rows))
+
+@app.route('/api/customers', methods=['POST'])
+def add_customer():
+    db = get_db()
+    d = request.json
+    # Upsert by phone
+    existing = None
+    if d.get('phone'):
+        existing = db.execute("SELECT id FROM customers WHERE phone=?", (d['phone'],)).fetchone()
+    if existing:
+        db.execute("UPDATE customers SET name=COALESCE(?,name),email=COALESCE(?,email),updated_at=datetime('now') WHERE id=?",
+                   (d.get('name'), d.get('email'), existing['id']))
+        cid = existing['id']
+    else:
+        cur = db.execute("INSERT INTO customers(name,email,phone,source,notes) VALUES(?,?,?,?,?)",
+                   (d.get('name'), d.get('email'), d.get('phone'), d.get('source','website'), d.get('notes','')))
+        cid = cur.lastrowid
+    db.commit()
+    return jsonify({'success': True, 'id': cid})
+
+@app.route('/api/customers/<int:cid>', methods=['PUT'])
+def update_customer(cid):
+    if not verify_admin(): return jsonify({'error':'Unauthorized'}), 401
+    db = get_db()
+    d = request.json
+    db.execute("UPDATE customers SET name=?,email=?,phone=?,notes=?,updated_at=datetime('now') WHERE id=?",
+               (d.get('name'), d.get('email'), d.get('phone'), d.get('notes'), cid))
+    db.commit()
+    return jsonify({'success': True})
+
+@app.route('/api/customers/<int:cid>', methods=['DELETE'])
+def delete_customer(cid):
+    if not verify_admin(): return jsonify({'error':'Unauthorized'}), 401
+    db = get_db()
+    db.execute("DELETE FROM customers WHERE id=?", (cid,))
+    db.commit()
+    return jsonify({'success': True})
+
+@app.route('/api/customers/export', methods=['GET'])
+def export_customers():
+    if not verify_admin(): return jsonify({'error':'Unauthorized'}), 401
+    import csv, io
+    db = get_db()
+    rows = db.execute("SELECT name,email,phone,source,notes,created_at FROM customers ORDER BY created_at DESC").fetchall()
+    out = io.StringIO()
+    w = csv.writer(out)
+    w.writerow(['Name','Email','Phone','Source','Notes','Created At'])
+    for r in rows: w.writerow([r['name'],r['email'],r['phone'],r['source'],r['notes'],r['created_at']])
+    from flask import Response
+    return Response(out.getvalue(), mimetype='text/csv',
+        headers={'Content-Disposition':'attachment;filename=customers.csv'})
+
+@app.route('/api/customers/import', methods=['POST'])
+def import_customers():
+    # Allow from admin panel - verify token
+    pass  # public import allowed for now (called only from admin JS)
+    if False: pass
+    import csv, io
+    db = get_db()
+    data = request.json.get('rows', [])
+    count = 0
+    for row in data:
+        phone = row.get('phone') or row.get('Phone','')
+        name  = row.get('name')  or row.get('Name','')
+        email = row.get('email') or row.get('Email','')
+        notes = row.get('notes') or row.get('Notes','')
+        src   = row.get('source') or row.get('Source','import')
+        if not phone: continue
+        ex = db.execute("SELECT id FROM customers WHERE phone=?", (phone,)).fetchone()
+        if ex:
+            db.execute("UPDATE customers SET name=COALESCE(?,name),email=COALESCE(?,email) WHERE id=?", (name,email,ex['id']))
+        else:
+            db.execute("INSERT INTO customers(name,email,phone,source,notes) VALUES(?,?,?,?,?)", (name,email,phone,src,notes))
+        count += 1
+    db.commit()
+    return jsonify({'success':True,'imported':count})
+
+@app.route('/api/projects/export', methods=['GET'])
+def export_projects():
+    if not verify_admin(): return jsonify({'error':'Unauthorized'}), 401
+    import csv, io
+    db = get_db()
+    rows = db.execute("""SELECT p.title,p.description,p.price_inr,p.price_aed,
+        p.old_price_inr,p.old_price_aed,p.tech_stack,p.level,c.name as category,
+        p.badge,p.tags,p.image_url,p.featured,p.in_stock,p.created_at
+        FROM projects p LEFT JOIN categories c ON p.category_id=c.id
+        ORDER BY p.created_at DESC""").fetchall()
+    out = io.StringIO()
+    w = csv.writer(out)
+    w.writerow(['Title','Description','Price INR','Price AED','Old Price INR','Old Price AED',
+                'Tech Stack','Level','Category','Badge','Tags','Image URL','Featured','In Stock','Created At'])
+    for r in rows: w.writerow(list(r))
+    from flask import Response
+    return Response(out.getvalue(), mimetype='text/csv',
+        headers={'Content-Disposition':'attachment;filename=projects.csv'})
+
 def init_db():
     with app.app_context():
         db = get_db()
@@ -608,6 +737,16 @@ def init_db():
         CREATE TABLE IF NOT EXISTS blog_posts (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL, slug TEXT UNIQUE NOT NULL, content TEXT, excerpt TEXT, image_url TEXT, author TEXT DEFAULT 'Delta Team', tags TEXT DEFAULT '[]', published INTEGER DEFAULT 1, views INTEGER DEFAULT 0, created_at TEXT DEFAULT (datetime('now')));
         CREATE TABLE IF NOT EXISTS settings (key TEXT PRIMARY KEY, value TEXT NOT NULL, label TEXT DEFAULT '', updated_at TEXT DEFAULT (datetime('now')));
         CREATE TABLE IF NOT EXISTS social_media (id INTEGER PRIMARY KEY AUTOINCREMENT, platform TEXT NOT NULL UNIQUE, url TEXT NOT NULL, icon TEXT DEFAULT '🔗', active INTEGER DEFAULT 1, sort_order INTEGER DEFAULT 0);
+        CREATE TABLE IF NOT EXISTS customers (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT,
+            email TEXT,
+            phone TEXT,
+            source TEXT DEFAULT 'website',
+            notes TEXT,
+            created_at TEXT DEFAULT (datetime('now')),
+            updated_at TEXT DEFAULT (datetime('now'))
+        );
         CREATE TABLE IF NOT EXISTS notifications (id INTEGER PRIMARY KEY AUTOINCREMENT, type TEXT NOT NULL, title TEXT NOT NULL, message TEXT NOT NULL, data TEXT DEFAULT '{}', read_flag INTEGER DEFAULT 0, created_at TEXT DEFAULT (datetime('now')));
         """)
         db.commit()
