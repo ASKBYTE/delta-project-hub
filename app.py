@@ -1,4 +1,4 @@
-import sqlite3, os, hashlib, json, time, re, requests
+import sqlite3, os, hashlib, json, time, re
 from flask import Flask, request, jsonify, send_from_directory, g
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
