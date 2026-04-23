@@ -9,15 +9,16 @@ app = Flask(__name__, static_folder='static', static_url_path='/static')
 CORS(app, supports_credentials=True)
 app.secret_key = secrets.token_hex(32)
 
-DB_PATH = os.path.join(os.path.dirname(__file__), 'delta.db')
-UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), 'static/uploads')
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DB_PATH = os.path.join(BASE_DIR, 'delta.db')
+UPLOAD_FOLDER = os.path.join(BASE_DIR, 'static', 'uploads')
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 def get_db():
     if 'db' not in g:
         g.db = sqlite3.connect(DB_PATH)
         g.db.row_factory = sqlite3.Row
-        g.db.execute("PRAGMA journal_mode=WAL")
+        # WAL mode disabled for cloud compatibility
     return g.db
 
 @app.teardown_appcontext
@@ -86,14 +87,14 @@ def add_notification(ntype, title, message, data={}):
 # ── SERVE FRONTEND ──
 @app.route('/')
 def index():
-    return send_from_directory(os.path.dirname(__file__), 'index.html')
+    return send_from_directory(BASE_DIR, 'index.html')
 
 @app.route('/<path:path>')
 def catch_all(path):
     static_path = os.path.join(os.path.dirname(__file__), path)
     if os.path.exists(static_path) and os.path.isfile(static_path):
         return send_from_directory(os.path.dirname(__file__), path)
-    return send_from_directory(os.path.dirname(__file__), 'index.html')
+    return send_from_directory(BASE_DIR, 'index.html')
 
 # ── SETTINGS API ──
 @app.route('/api/settings', methods=['GET'])
@@ -611,7 +612,10 @@ def init_db():
         """)
         db.commit()
 
-if __name__ == '__main__':
+# Initialize DB on startup (important for Railway)
+with app.app_context():
     init_db()
+
+if __name__ == '__main__':
     port = int(os.environ.get('PORT', 8000))
     app.run(host='0.0.0.0', port=port, debug=False)
