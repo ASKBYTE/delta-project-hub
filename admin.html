@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=5"/>
+<title>Admin — Delta Project Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet"/>
+<style>
+:root{--pri:#0f2d5e;--acc:#f97316;--bg:#f4f7fb;--card:#fff;--txt:#1a2340;--mut:#6b7a99;--bdr:#e2e8f0;--grn:#16a34a;--red:#dc2626;--r:12px;--sh:0 2px 16px rgba(15,45,94,.09)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--txt)}
+a{text-decoration:none;color:inherit}
+button{font-family:inherit;cursor:pointer}
+input,textarea,select{font-family:inherit;outline:none;border:1.5px solid var(--bdr);border-radius:8px;padding:9px 13px;font-size:14px;width:100%;transition:.15s;background:#fff;color:var(--txt)}
+input:focus,textarea:focus,select:focus{border-color:var(--acc);box-shadow:0 0 0 3px rgba(249,115,22,.1)}
+label{font-size:12px;font-weight:600;color:var(--mut);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:5px}
+.fg{margin-bottom:12px}
+
+/* LOGIN PAGE */
+.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0f2d5e,#1a4a8a)}
+.login-box{background:#fff;border-radius:20px;padding:40px;width:100%;max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,.25);text-align:center}
+.login-logo{height:60px;object-fit:contain;margin-bottom:16px}
+.login-title{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--pri);margin-bottom:6px}
+.login-sub{font-size:13px;color:var(--mut);margin-bottom:24px}
+.login-box .fg{text-align:left}
+.btn-login{width:100%;padding:14px;background:var(--acc);color:#fff;border:none;border-radius:10px;font-family:'Syne',sans-serif;font-weight:800;font-size:15px;cursor:pointer;transition:.2s;margin-top:8px}
+.btn-login:hover{background:#ea6c04}
+.login-err{background:#fee2e2;color:var(--red);border-radius:8px;padding:10px;font-size:13px;margin-bottom:12px;display:none}
+
+/* ADMIN LAYOUT */
+.admin-layout{display:flex;min-height:100vh}
+.sidebar{width:220px;background:var(--pri);flex-shrink:0;display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;transform:translateX(0);transition:.25s}
+.sidebar.closed{transform:translateX(-220px)}
+.sb-logo{padding:20px 16px 16px;border-bottom:1px solid rgba(255,255,255,.1)}
+.sb-logo img{height:40px;object-fit:contain}
+.sb-logo-text{font-family:'Syne',sans-serif;font-weight:800;font-size:14px;color:#fff;margin-top:8px}
+.sb-nav{flex:1;overflow-y:auto;padding:12px 0}
+.sb-link{display:flex;align-items:center;gap:10px;padding:11px 18px;font-size:13px;font-weight:600;color:rgba(255,255,255,.75);cursor:pointer;transition:.15s;border-left:3px solid transparent}
+.sb-link:hover{background:rgba(255,255,255,.08);color:#fff}
+.sb-link.active{background:rgba(249,115,22,.15);color:#fff;border-left-color:var(--acc)}
+.sb-link .ico{font-size:16px;width:20px;text-align:center}
+.sb-footer{padding:14px 18px;border-top:1px solid rgba(255,255,255,.1)}
+.sb-user{font-size:12px;color:rgba(255,255,255,.6);margin-bottom:8px}
+.btn-logout{width:100%;padding:8px;background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2);border-radius:8px;font-size:12px;font-family:'Syne',sans-serif;font-weight:700;cursor:pointer;transition:.15s}
+.btn-logout:hover{background:rgba(220,38,38,.3)}
+.main-area{margin-left:220px;flex:1;display:flex;flex-direction:column;min-height:100vh;transition:.25s}
+.topbar{background:#fff;border-bottom:1.5px solid var(--bdr);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;position:sticky;top:0;z-index:50}
+.menu-btn{background:none;border:none;font-size:22px;cursor:pointer;color:var(--pri);display:none}
+.topbar-title{font-family:'Syne',sans-serif;font-weight:800;font-size:16px;color:var(--pri)}
+.notif-btn{position:relative;background:var(--bg);border:1.5px solid var(--bdr);border-radius:8px;padding:7px 10px;font-size:16px;cursor:pointer;transition:.15s}
+.notif-dot{position:absolute;top:-3px;right:-3px;width:9px;height:9px;background:var(--red);border-radius:50%;border:2px solid #fff;display:none}
+.content{flex:1;padding:24px;max-width:1400px;width:100%}
+
+/* CARDS */
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;margin-bottom:24px}
+.stat-card{background:#fff;border-radius:var(--r);padding:18px;box-shadow:var(--sh);border-left:4px solid var(--acc)}
+.stat-val{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:var(--pri)}
+.stat-lbl{font-size:12px;color:var(--mut);margin-top:4px;font-weight:600;text-transform:uppercase;letter-spacing:.05em}
+
+/* SECTION HEADER */
+.sec-hdr{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.sec-title{font-family:'Syne',sans-serif;font-weight:800;font-size:18px;color:var(--pri)}
+.btn-row{display:flex;gap:7px;flex-wrap:wrap}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:9px 16px;border-radius:8px;font-family:'Syne',sans-serif;font-weight:700;font-size:13px;border:none;cursor:pointer;transition:.15s;white-space:nowrap}
+.btn-p{background:var(--acc);color:#fff}.btn-p:hover{background:#ea6c04}
+.btn-s{background:#fff;color:var(--pri);border:1.5px solid var(--bdr)}.btn-s:hover{border-color:var(--acc);color:var(--acc)}
+.btn-r{background:#fee2e2;color:var(--red);border:1px solid #fca5a5}.btn-r:hover{background:#fecaca}
+.btn-g{background:#d1fae5;color:var(--grn);border:1px solid #86efac}
+.btn-sm{padding:5px 10px;font-size:12px}
+
+/* TABLE */
+.tbl-wrap{background:#fff;border-radius:var(--r);box-shadow:var(--sh);overflow:hidden}
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th{background:var(--bg);padding:10px 14px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);font-weight:700;border-bottom:1.5px solid var(--bdr);white-space:nowrap}
+.tbl td{padding:10px 14px;border-bottom:1px solid var(--bdr);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:#fafafa}
+.tbl-actions{display:flex;gap:5px}
+
+/* MODAL */
+.mo{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:600;align-items:center;justify-content:center;padding:16px}
+.mo.open{display:flex}
+.md{background:#fff;border-radius:18px;width:100%;max-width:680px;max-height:90vh;overflow-y:auto;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+.md-hdr{padding:20px 24px 0;display:flex;align-items:center;justify-content:space-between}
+.md-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:800;color:var(--pri)}
+.md-close{background:none;border:none;font-size:22px;cursor:pointer;color:var(--mut);padding:4px}
+.md-body{padding:20px 24px 24px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.full{grid-column:1/-1}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700}
+.badge-new{background:#dbeafe;color:#1d4ed8}
+.badge-pending{background:#fef3c7;color:#92400e}
+.badge-done{background:#d1fae5;color:#065f46}
+.badge-red{background:#fee2e2;color:var(--red)}
+
+/* SEARCH */
+.search-bar{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.search-bar input{max-width:280px}
+
+/* MOBILE */
+@media(max-width:768px){
+  .sidebar{transform:translateX(-220px)}
+  .sidebar.open{transform:translateX(0)}
+  .main-area{margin-left:0}
+  .menu-btn{display:block}
+  .form-grid{grid-template-columns:1fr}
+  .stat-grid{grid-template-columns:1fr 1fr}
+  .content{padding:14px}
+  .topbar{padding:10px 14px}
+  .tbl-wrap{overflow-x:auto}
+}
+@media(max-width:400px){
+  .stat-grid{grid-template-columns:1fr}
+}
+
+/* NOTIFICATION PANEL */
+.notif-panel{position:fixed;top:62px;right:14px;width:320px;max-height:440px;background:#fff;border:1.5px solid var(--bdr);border-radius:var(--r);box-shadow:0 10px 40px rgba(0,0,0,.15);z-index:500;display:none;flex-direction:column;overflow:hidden}
+.notif-panel.open{display:flex}
+.notif-hdr{padding:12px 16px;border-bottom:1.5px solid var(--bdr);display:flex;justify-content:space-between;align-items:center;font-family:'Syne',sans-serif;font-weight:700;font-size:13px}
+.notif-list{overflow-y:auto;flex:1}
+.notif-item{padding:11px 16px;border-bottom:1px solid var(--bdr);cursor:pointer}
+.notif-item:hover{background:var(--bg)}
+.notif-item.unread{background:#fff7ed}
+.notif-type{font-size:10px;color:var(--acc);font-weight:700;text-transform:uppercase;margin-bottom:2px}
+.notif-title{font-size:13px;font-weight:600;color:var(--pri)}
+.notif-msg{font-size:12px;color:var(--mut);white-space:pre-line;margin-top:2px;line-height:1.4}
+.notif-time{font-size:11px;color:var(--mut);margin-top:4px}
+
+/* PRICING SECTION */
+.price-box{background:#fff7ed;border:1.5px solid #fed7aa;border-radius:10px;padding:14px;margin-bottom:12px}
+.price-box label{color:var(--acc)}
+.section-box{background:var(--bg);border-radius:10px;padding:14px;margin-bottom:12px}
+.section-label{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--pri);margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid var(--acc)}
+.img-preview{width:80px;height:60px;object-fit:cover;border-radius:8px;border:1.5px solid var(--bdr);margin-top:6px}
+.toast{position:fixed;bottom:24px;right:24px;background:var(--pri);color:#fff;padding:12px 20px;border-radius:10px;font-size:13px;font-weight:600;z-index:9999;box-shadow:0 8px 24px rgba(0,0,0,.2);opacity:0;transform:translateY(10px);transition:.3s;pointer-events:none}
+.toast.show{opacity:1;transform:translateY(0)}
+</style>
+</head>
+<body>
+
+<!-- TOAST -->
+<div id="toast" class="toast"></div>
+
+<!-- NOTIFICATION PANEL -->
+<div id="notifPanel" class="notif-panel">
+  <div class="notif-hdr">
+    🔔 Notifications
+    <button onclick="markAllRead()" style="background:none;border:none;color:var(--acc);font-size:12px;cursor:pointer;font-family:inherit">Mark all read</button>
+  </div>
+  <div class="notif-list" id="notifList"></div>
+</div>
+
+<!-- PROJECT FORM MODAL -->
+<div class="mo" id="moPF" onclick="if(event.target===this)cM('moPF')">
+  <div class="md" style="max-width:780px">
+    <div class="md-hdr">
+      <div class="md-title" id="pfH">Add New Project</div>
+      <button class="md-close" onclick="cM('moPF')">✕</button>
+    </div>
+    <div class="md-body">
+      <div class="section-box">
+        <div class="section-label">📋 Basic Information</div>
+        <div class="form-grid">
+          <div class="fg full"><label>Project Title *</label><input id="pfTitle" type="text" placeholder="e.g. Smart IoT Farm Monitoring System"/></div>
+          <div class="fg"><label>Category</label><select id="pfCat"><option value="">Select…</option></select></div>
+          <div class="fg"><label>Level</label><select id="pfLevel"><option>Final Year</option><option>Mini Project</option><option>Diploma</option></select></div>
+          <div class="fg"><label>Badge Text</label><input id="pfBadge" type="text" placeholder="Best Seller / New / Hot…"/></div>
+          <div class="fg"><label>Badge Color</label><select id="pfBT"><option value="o">🟠 Orange</option><option value="g">🟢 Green</option><option value="b">🔵 Blue</option></select></div>
+        </div>
+      </div>
+      <div class="price-box">
+        <div class="section-label" style="border-color:var(--acc)">💰 Pricing — Enter Both INR and AED</div>
+        <div class="form-grid">
+          <div class="fg"><label>Selling Price ₹ INR *</label><input id="pfINR" type="number" placeholder="9500" oninput="calcAED()"/></div>
+          <div class="fg"><label>Selling Price AED *</label><input id="pfAED" type="number" placeholder="Auto-calculated" step="0.01"/></div>
+          <div class="fg"><label>Original Price ₹ INR (strike)</label><input id="pfOINR" type="number" placeholder="12000" oninput="calcOAED()"/></div>
+          <div class="fg"><label>Original Price AED (strike)</label><input id="pfOAED" type="number" placeholder="Auto-calculated" step="0.01"/></div>
+        </div>
+        <div style="font-size:12px;color:var(--acc)">💡 AED = INR × 0.132 (300% of 0.044 base rate). <button type="button" onclick="calcAED();calcOAED()" class="btn btn-p btn-sm">↻ Recalculate AED</button></div>
+      </div>
+      <div class="section-box">
+        <div class="section-label">📝 Description & Content</div>
+        <div class="fg"><label>Short Description * (shown on cards)</label><textarea id="pfDesc" rows="2" placeholder="1-2 sentence summary…"></textarea></div>
+        <div class="fg"><label>Project Aim / Objective</label><textarea id="pfAim" rows="2" placeholder="Main aim and objectives…"></textarea></div>
+        <div class="fg"><label>Abstract (full detail page)</label><textarea id="pfAbstract" rows="2" placeholder="Full project abstract…"></textarea></div>
+      </div>
+      <div class="section-box">
+        <div class="section-label">🔧 Technical Details</div>
+        <div class="form-grid">
+          <div class="fg"><label>Tech Stack</label><input id="pfTech" type="text" placeholder="Arduino, ESP32, Python…"/></div>
+          <div class="fg"><label>Software Tools</label><input id="pfSW" type="text" placeholder="Arduino IDE, Blynk…"/></div>
+          <div class="fg full"><label>Hardware Components</label><input id="pfHW" type="text" placeholder="Arduino UNO, DHT11, LCD 16x2…"/></div>
+          <div class="fg full"><label>Project Image URL</label><input id="pfImg" type="url" placeholder="https://… paste direct image link"/><img id="pfImgPrev" class="img-preview" style="display:none"/></div>
+          <div class="fg full"><label>Tags (comma separated)</label><input id="pfTags" type="text" placeholder="IoT, Arduino, Embedded, Smart Home…"/></div>
+        </div>
+      </div>
+      <div style="display:flex;gap:16px;margin-bottom:16px;flex-wrap:wrap">
+        <label style="display:flex;gap:8px;align-items:center;cursor:pointer;font-size:14px;background:#d1fae5;padding:8px 14px;border-radius:8px;text-transform:none;letter-spacing:0"><input type="checkbox" id="pfFeat"/> ⭐ Featured on Homepage</label>
+        <label style="display:flex;gap:8px;align-items:center;cursor:pointer;font-size:14px;background:#dbeafe;padding:8px 14px;border-radius:8px;text-transform:none;letter-spacing:0"><input type="checkbox" id="pfStock" checked/> ✅ In Stock</label>
+      </div>
+      <input type="hidden" id="pfId"/>
+      <button onclick="saveProj()" class="btn btn-p" style="width:100%;justify-content:center;padding:14px;font-size:15px">💾 Save Project</button>
+    </div>
+  </div>
+</div>
+
+<!-- CUSTOMER MODAL -->
+<div class="mo" id="moCust" onclick="if(event.target===this)cM('moCust')">
+  <div class="md" style="max-width:460px">
+    <div class="md-hdr">
+      <div class="md-title" id="custH">Add Customer</div>
+      <button class="md-close" onclick="cM('moCust')">✕</button>
+    </div>
+    <div class="md-body">
+      <div class="fg"><label>Full Name *</label><input id="cfName" type="text" placeholder="Customer full name"/></div>
+      <div class="fg"><label>Phone / WhatsApp *</label><input id="cfPhone" type="tel" placeholder="+971 or +91 number"/></div>
+      <div class="fg"><label>Email Address</label><input id="cfEmail" type="email" placeholder="email@example.com"/></div>
+      <div class="fg"><label>Source</label>
+        <select id="cfSource">
+          <option value="manual">Manual Entry</option>
+          <option value="enquiry">Enquiry</option>
+          <option value="order">Order</option>
+          <option value="whatsapp">WhatsApp</option>
+          <option value="referral">Referral</option>
+        </select>
+      </div>
+      <div class="fg"><label>Notes</label><textarea id="cfNotes" rows="3" placeholder="Notes about this customer…"></textarea></div>
+      <input type="hidden" id="cfId"/>
+      <button onclick="saveCust()" class="btn btn-p" style="width:100%;justify-content:center;padding:13px;font-size:15px">💾 Save Customer</button>
+    </div>
+  </div>
+</div>
+
+<!-- SETTINGS MODAL -->
+<div class="mo" id="moSettings" onclick="if(event.target===this)cM('moSettings')">
+  <div class="md" style="max-width:640px">
+    <div class="md-hdr">
+      <div class="md-title">⚙️ Site Settings</div>
+      <button class="md-close" onclick="cM('moSettings')">✕</button>
+    </div>
+    <div class="md-body" id="settingsBody"></div>
+  </div>
+</div>
+
+<!-- LOGIN PAGE (shown initially) -->
+<div id="loginPage" class="login-wrap">
+  <div class="login-box">
+    <img src="/static/delta-logo.jpeg" class="login-logo" onerror="this.style.display='none'"/>
+    <div class="login-title">Admin Portal</div>
+    <div class="login-sub">Delta Project & Solution</div>
+    <div id="loginErr" class="login-err"></div>
+    <div class="fg"><label>Email Address</label><input type="email" id="loginEmail" placeholder="Enter admin email" onkeydown="if(event.key==='Enter')doLogin()"/></div>
+    <div class="fg"><label>Password</label><input type="password" id="loginPw" placeholder="Enter password" onkeydown="if(event.key==='Enter')doLogin()"/></div>
+    <button class="btn-login" onclick="doLogin()">Login to Admin Panel →</button>
+    <div style="margin-top:14px;font-size:12px;color:var(--mut)">
+      <a href="/" style="color:var(--acc);font-weight:600">← Back to Website</a>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN PANEL (hidden until login) -->
+<div id="adminPanel" class="admin-layout" style="display:none">
+  <!-- SIDEBAR -->
+  <nav class="sidebar" id="sidebar">
+    <div class="sb-logo">
+      <img src="/static/delta-logo.jpeg" style="height:38px;object-fit:contain" onerror="this.style.display='none'"/>
+      <div class="sb-logo-text">Delta Admin</div>
+    </div>
+    <div class="sb-nav">
+      <div class="sb-link active" onclick="showSection('dashboard')" id="lnk-dashboard"><span class="ico">📊</span> Dashboard</div>
+      <div class="sb-link" onclick="showSection('projects')" id="lnk-projects"><span class="ico">📦</span> Projects</div>
+      <div class="sb-link" onclick="showSection('enquiries')" id="lnk-enquiries"><span class="ico">📧</span> Enquiries</div>
+      <div class="sb-link" onclick="showSection('customers')" id="lnk-customers"><span class="ico">👥</span> Customers</div>
+      <div class="sb-link" onclick="showSection('orders')" id="lnk-orders"><span class="ico">🛒</span> Orders</div>
+      <div class="sb-link" onclick="showSection('categories')" id="lnk-categories"><span class="ico">📁</span> Categories</div>
+      <div class="sb-link" onclick="showSection('newsletter')" id="lnk-newsletter"><span class="ico">📨</span> Newsletter</div>
+      <div class="sb-link" onclick="openSettings()" id="lnk-settings"><span class="ico">⚙️</span> Settings</div>
+    </div>
+    <div class="sb-footer">
+      <div class="sb-user" id="sbUser"></div>
+      <button class="btn-logout" onclick="doLogout()">Logout</button>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <div class="main-area">
+    <div class="topbar">
+      <div style="display:flex;align-items:center;gap:10px">
+        <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+        <div class="topbar-title" id="topbarTitle">Dashboard</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <a href="/" target="_blank" class="btn btn-s btn-sm">🌐 View Site</a>
+        <button class="notif-btn" onclick="toggleNotif()">🔔<span class="notif-dot" id="nDot"></span></button>
+      </div>
+    </div>
+    <div class="content" id="mainContent">
+      <!-- content injected here -->
+    </div>
+  </div>
+</div>
+
+<script>
+const TOKEN = localStorage.getItem('adminToken') || '';
+const API   = (p, opts={}) => fetch(p, {headers:{'Content-Type':'application/json','Authorization':'Bearer '+A.token}, ...opts}).then(r=>r.json()).catch(()=>({}));
+const A     = { token: TOKEN, name: '' };
+
+function toast(msg, dur=3000) {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), dur);
+}
+function oM(id) { document.getElementById(id)?.classList.add('open'); }
+function cM(id) { document.getElementById(id)?.classList.remove('open'); }
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;'); }
+function fmt(n) { return Number(n||0).toLocaleString('en-IN'); }
+
+// ── LOGIN ──────────────────────────────────────────────────────────────────
+async function doLogin() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const pw    = document.getElementById('loginPw').value;
+  const err   = document.getElementById('loginErr');
+  if (!email || !pw) { err.textContent='Enter email and password'; err.style.display='block'; return; }
+  const res = await fetch('/api/auth/login', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({email, password:pw})
+  }).then(r=>r.json()).catch(()=>({error:'Network error'}));
+  if (res.error) { err.textContent=res.error; err.style.display='block'; return; }
+  if (res.role !== 'admin') { err.textContent='Access denied — admin only'; err.style.display='block'; return; }
+  A.token = res.token; A.name = res.name;
+  localStorage.setItem('adminToken', res.token);
+  showAdmin();
+}
+
+function showAdmin() {
+  document.getElementById('loginPage').style.display  = 'none';
+  document.getElementById('adminPanel').style.display = 'flex';
+  document.getElementById('sbUser').textContent = '👤 ' + (A.name || 'Admin');
+  showSection('dashboard');
+  loadUnread();
+  setInterval(loadUnread, 30000);
+}
+
+function doLogout() {
+  localStorage.removeItem('adminToken');
+  A.token = '';
+  document.getElementById('loginPage').style.display  = 'flex';
+  document.getElementById('adminPanel').style.display = 'none';
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+}
+
+// Close sidebar on outside click (mobile)
+document.addEventListener('click', e => {
+  const sb = document.getElementById('sidebar');
+  if (window.innerWidth <= 768 && sb.classList.contains('open') &&
+      !sb.contains(e.target) && !e.target.classList.contains('menu-btn')) {
+    sb.classList.remove('open');
+  }
+});
+
+// ── SECTIONS ───────────────────────────────────────────────────────────────
+function showSection(sec) {
+  document.querySelectorAll('.sb-link').forEach(el => el.classList.remove('active'));
+  const lnk = document.getElementById('lnk-'+sec);
+  if (lnk) lnk.classList.add('active');
+  document.getElementById('topbarTitle').textContent = {
+    dashboard:'Dashboard',projects:'Projects',enquiries:'Enquiries',
+    customers:'Customers',orders:'Orders',categories:'Categories',newsletter:'Newsletter'
+  }[sec] || sec;
+  const c = document.getElementById('mainContent');
+  c.innerHTML = '<div style="text-align:center;padding:40px;color:var(--mut)"><div style="font-size:32px;margin-bottom:10px">⏳</div>Loading…</div>';
+  const map = { dashboard:loadDashboard, projects:loadProjects, enquiries:loadEnquiries,
+                customers:loadCustomers, orders:loadOrders, categories:loadCategories, newsletter:loadNewsletter };
+  if (map[sec]) map[sec](c);
+  // Close sidebar on mobile after navigation
+  if (window.innerWidth <= 768) document.getElementById('sidebar').classList.remove('open');
+}
+
+// ── DASHBOARD ──────────────────────────────────────────────────────────────
+async function loadDashboard(el) {
+  const s = await API('/api/admin/stats');
+  el.innerHTML = `
+    <div class="stat-grid">
+      <div class="stat-card"><div class="stat-val">${s.total_projects||0}</div><div class="stat-lbl">📦 Projects</div></div>
+      <div class="stat-card"><div class="stat-val">${s.total_customers||0}</div><div class="stat-lbl">👥 Customers</div></div>
+      <div class="stat-card"><div class="stat-val">${s.total_enquiries||0}</div><div class="stat-lbl">📧 Enquiries</div></div>
+      <div class="stat-card"><div class="stat-val">${s.new_enquiries||0}</div><div class="stat-lbl">🆕 New Enquiries</div></div>
+      <div class="stat-card"><div class="stat-val">${s.total_orders||0}</div><div class="stat-lbl">🛒 Orders</div></div>
+      <div class="stat-card"><div class="stat-val">${s.pending_orders||0}</div><div class="stat-lbl">⏳ Pending Orders</div></div>
+      <div class="stat-card"><div class="stat-val">${s.newsletter_count||0}</div><div class="stat-lbl">📨 Newsletter</div></div>
+      <div class="stat-card"><div class="stat-val">₹${fmt(s.total_revenue||0)}</div><div class="stat-lbl">💰 Revenue</div></div>
+    </div>
+    <div class="tbl-wrap">
+      <div style="padding:14px 18px;font-family:'Syne',sans-serif;font-weight:700;font-size:14px;color:var(--pri);border-bottom:1.5px solid var(--bdr)">🕐 Recent Orders</div>
+      <div style="overflow-x:auto"><table class="tbl">
+        <thead><tr><th>Order #</th><th>Customer</th><th>Phone</th><th>Total</th><th>Status</th><th>Date</th></tr></thead>
+        <tbody>${(s.recent_orders||[]).map(o=>`<tr>
+          <td><strong>${o.order_number}</strong></td>
+          <td>${o.customer_name||'—'}</td>
+          <td>${o.customer_phone||'—'}</td>
+          <td>₹${fmt(o.total)}</td>
+          <td><span class="badge badge-${o.status==='completed'?'done':o.status==='cancelled'?'red':'pending'}">${o.status}</span></td>
+          <td style="font-size:12px">${(o.created_at||'').split('T')[0]}</td>
+        </tr>`).join('') || '<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--mut)">No orders yet</td></tr>'}
+        </tbody>
+      </table></div>
+    </div>`;
+}
+
+// ── PROJECTS ───────────────────────────────────────────────────────────────
+async function loadProjects(el) {
+  const data = await API('/api/projects?per_page=200');
+  const ps   = data.projects || [];
+  el.innerHTML = `
+    <div class="sec-hdr">
+      <div class="sec-title">📦 Projects (${ps.length})</div>
+      <div class="btn-row">
+        <button class="btn btn-p" onclick="openAddProj()">+ Add Project</button>
+        <button class="btn btn-s" onclick="exportCSV('/api/projects/export','projects.csv')">⬇ Export CSV</button>
+        <label class="btn btn-s" style="cursor:pointer">⬆ Import CSV<input type="file" accept=".csv" style="display:none" onchange="importProjCSV(this)"/></label>
+      </div>
+    </div>
+    <div class="search-bar"><input type="text" placeholder="🔍 Search projects…" oninput="filterTable(this,'projTable')" style="max-width:280px"/></div>
+    <div class="tbl-wrap"><div style="overflow-x:auto"><table class="tbl" id="projTable">
+      <thead><tr><th>IMG</th><th>Title</th><th>INR</th><th>AED</th><th>Category</th><th>Level</th><th>Stock</th><th>Actions</th></tr></thead>
+      <tbody>${ps.map(p=>`<tr>
+        <td>${p.image_url?`<img src="${esc(p.image_url)}" style="width:52px;height:40px;object-fit:cover;border-radius:6px" onerror="this.style.display='none'"/>`:'—'}</td>
+        <td style="font-weight:600;max-width:200px">${esc(p.title)}</td>
+        <td style="white-space:nowrap">₹${fmt(p.price_inr)}</td>
+        <td style="white-space:nowrap">AED ${fmt(p.price_aed)}</td>
+        <td style="font-size:12px">${esc(p.category_name||'—')}</td>
+        <td style="font-size:12px">${esc(p.level||'—')}</td>
+        <td><span class="badge ${p.in_stock?'badge-done':'badge-red'}">${p.in_stock?'✓ Yes':'✗ No'}</span></td>
+        <td><div class="tbl-actions">
+          <button class="btn btn-s btn-sm" onclick="openEditProj(${p.id})">✏️ Edit</button>
+          <button class="btn btn-r btn-sm" onclick="delProj(${p.id})">🗑</button>
+        </div></td>
+      </tr>`).join('')}
+      </tbody>
+    </table></div></div>`;
+}
+
+// ── ENQUIRIES ──────────────────────────────────────────────────────────────
+async function loadEnquiries(el) {
+  const rows = await API('/api/enquiries');
+  el.innerHTML = `
+    <div class="sec-hdr"><div class="sec-title">📧 Enquiries (${rows.length})</div></div>
+    <div class="search-bar"><input type="text" placeholder="🔍 Search…" oninput="filterTable(this,'enqTable')" style="max-width:280px"/></div>
+    <div class="tbl-wrap"><div style="overflow-x:auto"><table class="tbl" id="enqTable">
+      <thead><tr><th>Name</th><th>Phone</th><th>Email</th><th>Project</th><th>Message</th><th>Status</th><th>Date</th></tr></thead>
+      <tbody>${rows.map(e=>`<tr>
+        <td><strong>${esc(e.name)}</strong></td>
+        <td><a href="tel:${esc(e.phone)}" style="color:var(--acc)">${esc(e.phone||'—')}</a></td>
+        <td style="font-size:12px">${esc(e.email||'—')}</td>
+        <td style="font-size:12px;max-width:120px">${esc(e.project_title||'General')}</td>
+        <td style="font-size:12px;max-width:180px">${esc((e.message||'').slice(0,80))}${(e.message||'').length>80?'…':''}</td>
+        <td><span class="badge badge-${e.status==='new'?'new':'done'}">${e.status}</span></td>
+        <td style="font-size:12px">${(e.created_at||'').split('T')[0]}</td>
+      </tr>`).join('')}
+      </tbody>
+    </table></div></div>`;
+}
+
+// ── CUSTOMERS ──────────────────────────────────────────────────────────────
+async function loadCustomers(el) {
+  const rows = await API('/api/customers');
+  el.innerHTML = `
+    <div class="sec-hdr">
+      <div class="sec-title">👥 Customers (${rows.length})</div>
+      <div class="btn-row">
+        <button class="btn btn-p" onclick="openAddCust()">+ Add Customer</button>
+        <button class="btn btn-s" onclick="exportCSV('/api/customers/export','customers.csv')">⬇ Export CSV</button>
+        <label class="btn btn-s" style="cursor:pointer">⬆ Import CSV<input type="file" accept=".csv" style="display:none" onchange="importCustCSV(this)"/></label>
+      </div>
+    </div>
+    <div class="search-bar"><input type="text" placeholder="🔍 Search customers…" oninput="filterTable(this,'custTable')" style="max-width:280px"/></div>
+    <div class="tbl-wrap"><div style="overflow-x:auto"><table class="tbl" id="custTable">
+      <thead><tr><th>Name</th><th>Phone</th><th>Email</th><th>Source</th><th>Notes</th><th>Date</th><th>Actions</th></tr></thead>
+      <tbody>${rows.map(c=>`<tr>
+        <td><strong>${esc(c.name||'—')}</strong></td>
+        <td><a href="tel:${esc(c.phone)}" style="color:var(--acc)">${esc(c.phone||'—')}</a></td>
+        <td style="font-size:12px">${esc(c.email||'—')}</td>
+        <td><span class="badge badge-new" style="font-size:10px">${esc(c.source||'website')}</span></td>
+        <td style="font-size:12px;max-width:160px">${esc((c.notes||'').slice(0,60))}</td>
+        <td style="font-size:12px">${(c.created_at||'').split('T')[0]}</td>
+        <td><div class="tbl-actions">
+          <button class="btn btn-s btn-sm" onclick='openEditCust(${JSON.stringify(c)})'>✏️ Edit</button>
+          <button class="btn btn-r btn-sm" onclick="delCust(${c.id})">🗑</button>
+        </div></td>
+      </tr>`).join('')}
+      </tbody>
+    </table></div></div>`;
+}
+
+// ── ORDERS ─────────────────────────────────────────────────────────────────
+async function loadOrders(el) {
+  const rows = await API('/api/orders');
+  el.innerHTML = `
+    <div class="sec-hdr"><div class="sec-title">🛒 Orders (${rows.length})</div></div>
+    <div class="tbl-wrap"><div style="overflow-x:auto"><table class="tbl">
+      <thead><tr><th>Order #</th><th>Customer</th><th>Phone</th><th>Items</th><th>Total</th><th>Status</th><th>Date</th></tr></thead>
+      <tbody>${rows.map(o=>{
+        const items = Array.isArray(o.items) ? o.items : (typeof o.items==='string'?JSON.parse(o.items||'[]'):[]);
+        return `<tr>
+          <td><strong>${esc(o.order_number)}</strong></td>
+          <td>${esc(o.customer_name||'—')}</td>
+          <td><a href="tel:${esc(o.customer_phone)}" style="color:var(--acc)">${esc(o.customer_phone||'—')}</a></td>
+          <td style="font-size:12px;max-width:180px">${items.map(i=>esc(i.title||'')).join(', ')}</td>
+          <td>₹${fmt(o.total)}</td>
+          <td><span class="badge badge-${o.status==='completed'?'done':o.status==='cancelled'?'red':'pending'}">${o.status}</span></td>
+          <td style="font-size:12px">${(o.created_at||'').split('T')[0]}</td>
+        </tr>`;
+      }).join('')}
+      </tbody>
+    </table></div></div>`;
+}
+
+// ── CATEGORIES ─────────────────────────────────────────────────────────────
+async function loadCategories(el) {
+  const rows = await API('/api/categories');
+  el.innerHTML = `
+    <div class="sec-hdr">
+      <div class="sec-title">📁 Categories (${rows.length})</div>
+      <button class="btn btn-p" onclick="addCat()">+ Add Category</button>
+    </div>
+    <div class="tbl-wrap"><div style="overflow-x:auto"><table class="tbl">
+      <thead><tr><th>Icon</th><th>Name</th><th>Slug</th><th>Projects</th><th>Actions</th></tr></thead>
+      <tbody>${rows.map(c=>`<tr>
+        <td style="font-size:22px">${c.icon||'📁'}</td>
+        <td><strong>${esc(c.name)}</strong></td>
+        <td style="font-size:12px;color:var(--mut)">${esc(c.slug)}</td>
+        <td>${c.project_count||0}</td>
+        <td><button class="btn btn-r btn-sm" onclick="delCat(${c.id})">🗑 Delete</button></td>
+      </tr>`).join('')}
+      </tbody>
+    </table></div></div>`;
+}
+
+async function addCat() {
+  const name = prompt('Category name:'); if (!name) return;
+  const icon = prompt('Icon (emoji):') || '📁';
+  const res  = await API('/api/categories', {method:'POST', body:JSON.stringify({name,icon})});
+  if (res.success) { toast('✅ Category added!'); showSection('categories'); }
+}
+async function delCat(id) {
+  if (!confirm('Delete category?')) return;
+  const res = await API('/api/categories/'+id, {method:'DELETE'});
+  if (res.success) { toast('🗑 Deleted'); showSection('categories'); }
+}
+
+// ── NEWSLETTER ─────────────────────────────────────────────────────────────
+async function loadNewsletter(el) {
+  const rows = await API('/api/newsletter') || [];
+  el.innerHTML = `
+    <div class="sec-hdr"><div class="sec-title">📨 Newsletter Subscribers (${(rows||[]).length})</div></div>
+    <div class="tbl-wrap"><table class="tbl">
+      <thead><tr><th>#</th><th>Email</th><th>Subscribed On</th></tr></thead>
+      <tbody>${(rows||[]).map((r,i)=>`<tr>
+        <td>${i+1}</td><td>${esc(r.email)}</td>
+        <td style="font-size:12px">${(r.created_at||'').split('T')[0]}</td>
+      </tr>`).join('')}
+      </tbody>
+    </table></div>`;
+}
+
+// ── PROJECT CRUD ───────────────────────────────────────────────────────────
+let _cats = [];
+async function loadCatsCache() {
+  const d = await API('/api/categories');
+  _cats   = d || [];
+  const sel = document.getElementById('pfCat');
+  if (sel) {
+    sel.innerHTML = '<option value="">Select category…</option>' + _cats.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join('');
+  }
+}
+
+function openAddProj() {
+  document.getElementById('pfH').textContent = 'Add New Project';
+  document.getElementById('pfId').value = '';
+  ['pfTitle','pfINR','pfAED','pfOINR','pfOAED','pfDesc','pfAim','pfAbstract','pfTech','pfSW','pfHW','pfBadge','pfImg','pfTags'].forEach(id=>{
+    const el=document.getElementById(id); if(el){el.value='';el._manuallyEdited=false;}
+  });
+  document.getElementById('pfFeat').checked  = false;
+  document.getElementById('pfStock').checked = true;
+  const bt=document.getElementById('pfBT'); if(bt) bt.value='o';
+  document.getElementById('pfImgPrev').style.display='none';
+  loadCatsCache();
+  oM('moPF');
+}
+
+async function openEditProj(id) {
+  const data = await API('/api/projects?per_page=500');
+  const p    = data.projects?.find(x=>x.id===id);
+  if (!p) return toast('❌ Project not found');
+  document.getElementById('pfH').textContent = '✏️ Edit: '+p.title.slice(0,40);
+  document.getElementById('pfId').value = id;
+  const set = (eid,val)=>{ const e=document.getElementById(eid); if(e) e.value=val||''; };
+  set('pfTitle',p.title); set('pfDesc',p.description); set('pfAim',p.aim);
+  set('pfAbstract',p.abstract); set('pfTech',p.tech_stack); set('pfSW',p.software_tools);
+  set('pfHW',p.hardware_components); set('pfBadge',p.badge); set('pfImg',p.image_url);
+  set('pfTags', Array.isArray(p.tags)?p.tags.join(', '):(p.tags||''));
+  set('pfINR',p.price_inr||p.price||''); set('pfAED',p.price_aed||'');
+  set('pfOINR',p.old_price_inr||''); set('pfOAED',p.old_price_aed||'');
+  ['pfAED','pfOAED'].forEach(fid=>{const e=document.getElementById(fid);if(e)e._manuallyEdited=true;});
+  const ch=(eid,val)=>{const e=document.getElementById(eid);if(e)e.checked=!!val;};
+  ch('pfFeat',p.featured); ch('pfStock',p.in_stock!==0);
+  // Update image preview
+  const prev=document.getElementById('pfImgPrev');
+  if(p.image_url){prev.src=p.image_url;prev.style.display='block';} else prev.style.display='none';
+  await loadCatsCache();
+  setTimeout(()=>{
+    const c=document.getElementById('pfCat'); if(c) c.value=p.category_id||'';
+    const l=document.getElementById('pfLevel'); if(l) l.value=p.level||'Final Year';
+    const b=document.getElementById('pfBT'); if(b) b.value=p.badge_type||'o';
+  },50);
+  oM('moPF');
+}
+
+function calcAED() {
+  const inr=parseFloat(document.getElementById('pfINR')?.value||'0');
+  if(!inr||isNaN(inr))return;
+  const el=document.getElementById('pfAED'); if(el&&!el._manuallyEdited) el.value=Math.round(inr*0.132*100)/100;
+}
+function calcOAED() {
+  const inr=parseFloat(document.getElementById('pfOINR')?.value||'0');
+  if(!inr||isNaN(inr))return;
+  const el=document.getElementById('pfOAED'); if(el&&!el._manuallyEdited) el.value=Math.round(inr*0.132*100)/100;
+}
+
+// Show image preview when URL typed
+document.addEventListener('input', e => {
+  if (e.target.id === 'pfImg') {
+    const prev = document.getElementById('pfImgPrev');
+    if (e.target.value) { prev.src=e.target.value; prev.style.display='block'; }
+    else prev.style.display='none';
+  }
+  if (e.target.id === 'pfAED' || e.target.id === 'pfOAED') e.target._manuallyEdited=true;
+});
+
+async function saveProj() {
+  const id       = document.getElementById('pfId')?.value.trim();
+  const title    = document.getElementById('pfTitle')?.value.trim();
+  const priceINR = parseFloat(document.getElementById('pfINR')?.value||'0');
+  const priceAED = parseFloat(document.getElementById('pfAED')?.value||'0');
+  if (!title)                     return toast('⚠️ Title is required');
+  if (!priceINR||isNaN(priceINR)) return toast('⚠️ INR price is required');
+  if (!priceAED||isNaN(priceAED)) return toast('⚠️ AED price is required — click Recalculate');
+  const tagsRaw = document.getElementById('pfTags')?.value||'';
+  const payload = {
+    title, price_inr:priceINR, price_aed:priceAED,
+    old_price_inr: parseFloat(document.getElementById('pfOINR')?.value||'0')||null,
+    old_price_aed: parseFloat(document.getElementById('pfOAED')?.value||'0')||null,
+    description:  document.getElementById('pfDesc')?.value||'',
+    aim:          document.getElementById('pfAim')?.value||'',
+    abstract:     document.getElementById('pfAbstract')?.value||'',
+    tech_stack:   document.getElementById('pfTech')?.value||'',
+    software_tools: document.getElementById('pfSW')?.value||'',
+    hardware_components: document.getElementById('pfHW')?.value||'',
+    badge:        document.getElementById('pfBadge')?.value||'',
+    badge_type:   document.getElementById('pfBT')?.value||'o',
+    image_url:    document.getElementById('pfImg')?.value||'',
+    tags: tagsRaw.split(',').map(t=>t.trim()).filter(Boolean),
+    level:        document.getElementById('pfLevel')?.value||'Final Year',
+    category_id:  parseInt(document.getElementById('pfCat')?.value)||null,
+    featured:     document.getElementById('pfFeat')?.checked?1:0,
+    in_stock:     document.getElementById('pfStock')?.checked?1:0,
+  };
+  const res = await API(id?'/api/projects/'+id:'/api/projects',
+    {method:id?'PUT':'POST', body:JSON.stringify(payload)});
+  if (res.success||res.id) { cM('moPF'); toast('✅ Project saved!'); showSection('projects'); }
+  else toast('❌ '+(res.error||'Failed to save'));
+}
+
+async function delProj(id) {
+  if (!confirm('Delete this project? Cannot be undone.')) return;
+  const res = await API('/api/projects/'+id, {method:'DELETE'});
+  if (res.success) { toast('🗑 Project deleted'); showSection('projects'); }
+  else toast('❌ Delete failed');
+}
+
+// ── CUSTOMER CRUD ──────────────────────────────────────────────────────────
+function openAddCust() {
+  document.getElementById('custH').textContent = '+ Add New Customer';
+  document.getElementById('cfId').value='';
+  ['cfName','cfPhone','cfEmail','cfNotes'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  document.getElementById('cfSource').value='manual';
+  oM('moCust');
+}
+
+function openEditCust(c) {
+  document.getElementById('custH').textContent = '✏️ Edit Customer';
+  document.getElementById('cfId').value     = c.id;
+  document.getElementById('cfName').value   = c.name||'';
+  document.getElementById('cfPhone').value  = c.phone||'';
+  document.getElementById('cfEmail').value  = c.email||'';
+  document.getElementById('cfNotes').value  = c.notes||'';
+  document.getElementById('cfSource').value = c.source||'manual';
+  oM('moCust');
+}
+
+async function saveCust() {
+  const name  = document.getElementById('cfName')?.value.trim();
+  const phone = document.getElementById('cfPhone')?.value.trim();
+  const id    = document.getElementById('cfId')?.value;
+  if (!name)  return toast('⚠️ Name is required');
+  if (!phone) return toast('⚠️ Phone is required');
+  const payload = {
+    name, phone,
+    email:  document.getElementById('cfEmail')?.value.trim(),
+    notes:  document.getElementById('cfNotes')?.value.trim(),
+    source: document.getElementById('cfSource')?.value||'manual',
+  };
+  const res = await API(id?'/api/customers/'+id:'/api/customers',
+    {method:id?'PUT':'POST', body:JSON.stringify(payload)});
+  if (res.success) { cM('moCust'); toast('✅ Customer saved!'); showSection('customers'); }
+  else toast('❌ '+(res.error||'Failed'));
+}
+
+async function delCust(id) {
+  if (!confirm('Delete this customer?')) return;
+  const res = await API('/api/customers/'+id, {method:'DELETE'});
+  if (res.success) { toast('🗑 Deleted'); showSection('customers'); }
+}
+
+// ── SETTINGS ───────────────────────────────────────────────────────────────
+async function openSettings() {
+  const s = await API('/api/settings');
+  const b = document.getElementById('settingsBody');
+  const keys = [
+    ['phone_uae','phone_india','whatsapp','email'],
+    ['address_india','address_uae'],
+    ['instagram','facebook','youtube','linkedin','whatsapp_link'],
+    ['inr_to_aed','site_name','whatsapp_notify','callmebot_apikey'],
+  ];
+  const sections = ['📞 Contact','🗺️ Addresses','📱 Social Media','⚙️ System'];
+  b.innerHTML = keys.map((ks,i)=>`
+    <div class="section-box" style="margin-bottom:12px">
+      <div class="section-label">${sections[i]}</div>
+      <div class="form-grid">${ks.map(k=>`
+        <div class="fg"><label>${(s[k]?.label||k).replace(/_/g,' ')}</label>
+          <input type="text" id="st-${k}" value="${esc(s[k]?.value||'')}"/>
+        </div>`).join('')}
+      </div>
+    </div>`).join('') + `
+    <div class="section-box">
+      <div class="section-label">🔑 Change Admin Password</div>
+      <div class="form-grid">
+        <div class="fg"><label>New Password</label><input type="password" id="stPw1" placeholder="Min 6 characters"/></div>
+        <div class="fg"><label>Confirm Password</label><input type="password" id="stPw2" placeholder="Repeat password"/></div>
+      </div>
+      <button class="btn btn-s" onclick="changePw()">Update Password</button>
+    </div>
+    <button onclick="saveSettings()" class="btn btn-p" style="width:100%;justify-content:center;padding:13px;font-size:15px;margin-top:4px">💾 Save All Settings</button>`;
+  oM('moSettings');
+}
+
+async function saveSettings() {
+  const all  = await API('/api/settings');
+  const data = {};
+  Object.keys(all).forEach(k => {
+    const el = document.getElementById('st-'+k); if (el) data[k] = el.value.trim();
+  });
+  const res = await API('/api/settings', {method:'PUT', body:JSON.stringify(data)});
+  if (res.success) { cM('moSettings'); toast('✅ Settings saved!'); }
+  else toast('❌ Failed to save');
+}
+
+async function changePw() {
+  const pw   = document.getElementById('stPw1')?.value;
+  const conf = document.getElementById('stPw2')?.value;
+  if (pw.length < 6)  return toast('⚠️ Min 6 characters');
+  if (pw !== conf)    return toast('⚠️ Passwords do not match');
+  const res = await API('/api/auth/change-password', {method:'POST', body:JSON.stringify({password:pw})});
+  if (res.success) { toast('✅ Password updated! Please login again.'); setTimeout(doLogout, 2000); }
+  else toast('❌ '+(res.error||'Failed'));
+}
+
+// ── NOTIFICATIONS ──────────────────────────────────────────────────────────
+async function loadUnread() {
+  const d   = await API('/api/notifications/unread-count');
+  const dot = document.getElementById('nDot');
+  if (dot) dot.style.display = (d.count > 0) ? 'block' : 'none';
+}
+
+async function toggleNotif() {
+  const p = document.getElementById('notifPanel');
+  p.classList.toggle('open');
+  if (p.classList.contains('open')) {
+    const rows = await API('/api/notifications');
+    const list = document.getElementById('notifList');
+    list.innerHTML = (rows||[]).length ? (rows||[]).map(n=>`
+      <div class="notif-item ${n.read_flag?'':'unread'}">
+        <div class="notif-type">${n.type}</div>
+        <div class="notif-title">${esc(n.title)}</div>
+        <div class="notif-msg">${esc((n.message||'').slice(0,120))}</div>
+        <div class="notif-time">${(n.created_at||'').replace('T',' ').slice(0,16)}</div>
+      </div>`).join('') : '<div style="padding:20px;text-align:center;color:var(--mut);font-size:13px">No notifications</div>';
+    await API('/api/notifications/read', {method:'PUT'});
+    const dot = document.getElementById('nDot'); if(dot) dot.style.display='none';
+  }
+}
+
+document.addEventListener('click', e => {
+  const panel = document.getElementById('notifPanel');
+  const btn   = document.querySelector('.notif-btn');
+  if (panel && btn && !panel.contains(e.target) && !btn.contains(e.target))
+    panel.classList.remove('open');
+});
+
+// ── CSV UTILS ──────────────────────────────────────────────────────────────
+function exportCSV(url, filename) {
+  fetch(url, {headers:{'Authorization':'Bearer '+A.token}})
+    .then(r=>r.blob()).then(blob=>{
+      const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+      a.download=filename; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+    });
+}
+
+async function importProjCSV(input) {
+  const file=input.files[0]; if(!file) return;
+  const text=await file.text(); input.value='';
+  const lines=text.trim().split('\n');
+  const hdrs=lines[0].split(',').map(h=>h.trim().replace(/"/g,'').toLowerCase());
+  let count=0,errs=0;
+  for(const line of lines.slice(1)){
+    const vals=line.split(',').map(v=>v.trim().replace(/"/g,''));
+    const row={}; hdrs.forEach((h,i)=>row[h]=vals[i]||'');
+    const title=row.title||row['project title']; const inr=parseFloat(row['price inr']||row.price_inr||'0');
+    if(!title||!inr){errs++;continue;}
+    const res=await API('/api/projects',{method:'POST',body:JSON.stringify({
+      title,price_inr:inr,price_aed:parseFloat(row['price aed']||row.price_aed||'0')||Math.round(inr*0.132*100)/100,
+      description:row.description||'',tech_stack:row['tech stack']||row.tech_stack||'',
+      level:row.level||'Final Year',tags:(row.tags||'').split(';').filter(Boolean),
+      featured:row.featured==='1'?1:0,in_stock:row.in_stock==='0'?0:1,
+    })});
+    if(res.success||res.id) count++; else errs++;
+  }
+  toast(errs?`⚠️ Imported ${count}, ${errs} failed`:`✅ Imported ${count} projects!`);
+  if(count>0) showSection('projects');
+}
+
+async function importCustCSV(input) {
+  const file=input.files[0]; if(!file) return;
+  const text=await file.text(); input.value='';
+  const lines=text.trim().split('\n');
+  const hdrs=lines[0].split(',').map(h=>h.trim().replace(/"/g,'').toLowerCase());
+  const rows=lines.slice(1).map(line=>{
+    const vals=line.split(',').map(v=>v.trim().replace(/"/g,''));
+    const obj={}; hdrs.forEach((h,i)=>obj[h]=vals[i]||''); return obj;
+  }).filter(r=>r.phone||r.Phone);
+  if(!rows.length) return toast('⚠️ No valid rows');
+  const res=await API('/api/customers/import',{method:'POST',body:JSON.stringify({rows})});
+  if(res.success){toast('✅ Imported '+res.imported+' customers!');showSection('customers');}
+  else toast('❌ Import failed');
+}
+
+// ── FILTER TABLE ───────────────────────────────────────────────────────────
+function filterTable(input, tableId) {
+  const q   = input.value.toLowerCase();
+  const tbl = document.getElementById(tableId);
+  if (!tbl) return;
+  tbl.querySelectorAll('tbody tr').forEach(row => {
+    row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
+  });
+}
+
+// ── NEWSLETTER API PROXY ───────────────────────────────────────────────────
+async function loadNewsletter(el) {
+  // Fetch via admin-authed endpoint
+  const res  = await fetch('/api/newsletter/list', {headers:{'Authorization':'Bearer '+A.token}}).then(r=>r.json()).catch(()=>[]);
+  const rows = Array.isArray(res) ? res : [];
+  el.innerHTML = `
+    <div class="sec-hdr"><div class="sec-title">📨 Newsletter (${rows.length})</div></div>
+    <div class="tbl-wrap"><table class="tbl">
+      <thead><tr><th>#</th><th>Email</th><th>Date</th></tr></thead>
+      <tbody>${rows.map((r,i)=>`<tr><td>${i+1}</td><td>${esc(r.email)}</td><td style="font-size:12px">${(r.created_at||'').split('T')[0]}</td></tr>`).join('')||'<tr><td colspan="3" style="text-align:center;padding:20px;color:var(--mut)">No subscribers</td></tr>'}
+      </tbody>
+    </table></div>`;
+}
+
+// ── INIT ───────────────────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  if (A.token) {
+    // Verify token is still valid
+    fetch('/api/admin/stats', {headers:{'Authorization':'Bearer '+A.token}})
+      .then(r => r.ok ? r.json() : Promise.reject())
+      .then(() => showAdmin())
+      .catch(() => { localStorage.removeItem('adminToken'); A.token=''; });
+  }
+});
+</script>
+</body>
+</html>
